@@ -1,0 +1,25 @@
+# Path to chuck binary. Defaults to location in Concrète Mixer package
+chuck_path=./chuck
+
+# Path to chuck chugin plugins - we have our own dir containing just GVerb
+chugin_path=lib/chugins
+
+# Set mode. Default is concrete. See conf/concrete.conf for more configuration options
+mode=concrete
+
+# Tempo (beats per minute)
+bpm=90
+
+# Is this meant to be played on an RPI? May attempt less CPU-intensive work
+# 1 for yes, 0 for no
+rpi=0
+
+# Chuck bufsize parameter
+bufsize=2048
+
+# Chuck samplerate parameter
+srate=44100
+
+# record output to wav file
+# 1 enabled recording, 0 disabled
+record=1
