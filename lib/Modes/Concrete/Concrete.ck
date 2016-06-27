@@ -23,6 +23,7 @@ Std.atof( me.arg(0) ) => float bpm;
 Std.atoi( me.arg(1) ) => int srate;
 Std.atoi( me.arg(2) ) => int record;
 Std.atoi( me.arg(3) ) => int rpi;
+
 me.dir() + "/../.." => string lib_path;
 
 Machine.add(lib_path + "/Control.ck:" + bpm + ":" + srate + ":" + record + ":" + rpi);
@@ -43,3 +44,4 @@ Machine.add(lib_path + "/Fx/FxRingMod.ck");
 Machine.add(lib_path + "/Fx/FxDownSampler.ck");
 Machine.add(lib_path + "/Fx/ReverseDelay.ck");
 Machine.add(lib_path + "/Fx/FxReverseDelay.ck");
+Machine.add(lib_path + "/Fx/FxFeedback.ck");

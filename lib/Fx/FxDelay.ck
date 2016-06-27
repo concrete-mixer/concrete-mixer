@@ -74,6 +74,7 @@ public class FxDelay extends Fx {
         <<< "   FxDelay: delayLength", delayLength, "delayMix", delayMix >>>;
         delayLength::ms => delay.max;
         delayLength::ms => delay.delay;
+        0 => delayMix;
         delayMix => feedback.gain;
         spork ~ activity();
     }

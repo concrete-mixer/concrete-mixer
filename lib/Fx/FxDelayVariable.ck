@@ -43,12 +43,28 @@ public class FxDelayVariable extends Fx {
 
     fun void activity() {
         while ( active ) {
+            // set duration for delay
             chooser.getDur( 0.05, 0.50 ) => dur duration;
+
             duration => delay.delay;
-            duration - 400::samp => duration;
+            duration - 400::samp => dur mainDuration;
+
+            // ALl things being equal we only need to duration => now
+            // at this point, but randomly changing delay times means
+            // there may be audible discontinuities (as in pops)
+            // in the signal.
+            //
+            // To paper over these cracks we fade the signal around
+            // the discontinuities
+
+            // fade in
             fader.fadeIn( 200::samp, 1.0, output );
             200::samp => now;
-            duration => now;
+
+            // work through mainDuration
+            mainDuration => now;
+
+            // fade out
             fader.fadeOut( 200::samp, output );
             200::samp => now;
         }
