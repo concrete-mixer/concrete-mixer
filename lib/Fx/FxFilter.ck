@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -68,7 +68,7 @@ public class FxFilter extends Fx {
             // and s/h a bit old fash
             "sine" => oscType;
 
-            Control.bpmIntervalsLong @=> float lfoFreqs[];
+            Time.bpmIntervalsLong @=> float lfoFreqs[];
             1 / lfoFreqs[ chooser.getInt( 0, lfoFreqs.cap() - 1 ) ] => lfoFreq;
 
             // sample hold is better when its faster...

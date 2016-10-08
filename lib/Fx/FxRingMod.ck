@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ public class FxRingMod extends Fx {
         while ( active ) {
             shiftFreq();
             <<< "sine.freq now", sine.freq() >>>;
-            c.getInt( 4, 16 ) * Control.beatDur => now;
+            c.getInt( 4, 16 ) * Time.beatDur => now;
         }
 
         input =< ring =< output;
@@ -51,7 +51,7 @@ public class FxRingMod extends Fx {
     }
 
     fun void shiftFreq() {
-        Control.beatDur * 1 => dur shiftTime;
+        Time.beatDur * 1 => dur shiftTime;
         sine.freq() => float oldFreq;
         getFreq() => float newFreq;
 

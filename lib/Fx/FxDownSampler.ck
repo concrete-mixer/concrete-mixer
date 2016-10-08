@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -44,8 +44,8 @@ public class FxDownSampler extends Fx {
             getBits() => int bits;
             bits => bc.bits;
 
-            c.getInt(0, Control.bpmIntervalsShort.cap() - 1 ) => int intervalChoice;
-            Control.bpmIntervalsShort[ intervalChoice ]::second => now;
+            c.getInt(0, Time.bpmIntervalsShort.cap() - 1 ) => int intervalChoice;
+            Time.bpmIntervalsShort[ intervalChoice ]::second => now;
         }
 
         input =< bc =< output;

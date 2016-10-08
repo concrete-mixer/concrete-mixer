@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -34,9 +34,9 @@ Fx @ fxChain[];
 
 UGen outLeft, outRight;
 
-outLeft => Control.leftOut;
-outRight => Control.rightOut;
-Control.fxIn => inputGain;
+outLeft => Mixer.leftOut;
+outRight => Mixer.rightOut;
+Mixer.fxIn => inputGain;
 
 // Fx chain is mono, let's make a little cheap stereo
 Delay delay;
@@ -59,8 +59,8 @@ fxChainBuild();
 
 bars[ chooser.getInt( 0, bars.cap() - 1 ) ] => int choice;
 
-Control.barDur * choice => dur fxTime;
-2 * Control.barDur => dur fadeTime;
+Time.barDur * choice => dur fxTime;
+2 * Time.barDur => dur fadeTime;
 fader.fadeIn( fadeTime, 0.7, outputPan );
 fxTime - fadeTime => now;
 
@@ -68,11 +68,13 @@ fader.fadeOutBlocking( fadeTime, outputPan );
 tearDown();
 
 fun void fxChainBuild() {
-    // Concrete.pm has a master array of choices, randomly sorted
-    // so we can iterate through a full suite of fxChains without
-    // repeating (at least until we've run out of choices)
-    // Concrete.pm has the total count of fx and rpi-only fx hard-coded
-    Std.atoi( me.arg(0) ) => int choice;
+    26 => int max;
+
+    if ( Config.rpi ) {
+        25 => max;
+    }
+
+    Math.random2(1, max) => int choice;
 
     // Define the fx chains. Originally we defined them randomly
     // but this meant much of the time the resulting chains were
@@ -197,8 +199,6 @@ fun void fxChainBuild() {
         ] @=> fxChain;
     }
 
-    // Beyond here all choices are for Control.rpi == 0 only
-    // because they feature Chugens
     if ( choice == 17 ) {
         [
             new FxDelay,
@@ -221,6 +221,8 @@ fun void fxChainBuild() {
         ] @=> fxChain;
     }
 
+    // Beyond here all choices are for Config.rpi == 0 only
+    // because they feature Chugens
     if ( choice == 20 ) {
         [
             new FxGate,
@@ -265,14 +267,21 @@ fun void fxChainBuild() {
         ] @=> fxChain;
     }
 
-    <<< "FX CHAIN: ", choice >>>;
+    if ( choice == 26 ) {
+        [
+            new FxReverb,
+            new FxPassthrough
+        ] @=> fxChain;
+    }
+
+    <<< "STARTING FX CHAIN: ", choice >>>;
     fxChainFx();
 }
 
 fun void fxChainFx() {
-    for ( 0 => int i; i < fxChain.cap(); i++ ) {
+    for ( int i; i < fxChain.cap(); i++ ) {
         fxChain[ i ] @=> Fx fx;
-        <<< i, fx.idString() >>>;
+        <<< i + 1, fx.idString() >>>;
         fx.initialise();
 
         if ( i == 0 ) {
@@ -319,9 +328,8 @@ fun void tearDown() {
     outputPan.left =< outLeft;
     outputPan.right =< outRight;
 
-    outLeft =< Control.leftOut;
-    outRight =< Control.rightOut;
-    2::second => now;
-    Control.oscSend.startMsg("playFxChain", "i");
-    1 => Control.oscSend.addInt;
+    outLeft =< Mixer.leftOut;
+    outRight =< Mixer.rightOut;
+
+    Mixer.oscOut.start("/playfxchain").add(1).send();
 }

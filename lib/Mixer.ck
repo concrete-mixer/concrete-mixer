@@ -20,24 +20,52 @@
     U.S.A.
 -----------------------------------------------------------------------------*/
 
-public class FxPassthrough extends Fx {
-    input => output;
+/*
+    Declare public class with static variables all libraries can access
+    Due to Kassen, see http://wiki.cs.princeton.edu/index.php/buses
+*/
+public class Mixer {
+    static Gain @ leftOut;
+    static Gain @ rightOut;
+    static Gain @ fxIn;
 
-    fun string idString() {
-        return "FxPassthrough";
-    }
+    static OscOut @ oscOut;
+}
 
-    fun void initialise() {
-        1 => active;
+// populate vars
+new Gain @=> Mixer.leftOut;
+new Gain @=> Mixer.rightOut;
+new Gain @=> Mixer.fxIn;
 
-        spork ~ activity();
-    }
+Dyno dynoL => dac.left;
+Dyno dynoR => dac.right;
 
-    fun void activity() {
-        while ( active ) {
-            1::second => now;
-        }
+dynoL.limit();
+dynoR.limit();
 
-        input =< output;
-    }
+Mixer.leftOut => dynoL; // left 'dry' out
+Mixer.rightOut => dynoR; // right 'dry' out
+
+0.3 => Mixer.fxIn.gain;
+
+Mixer.fxIn => Mixer.leftOut;
+Mixer.fxIn => Mixer.rightOut;
+
+new OscOut @=> Mixer.oscOut;
+("localhost", 3141) => Mixer.oscOut.dest;
+
+if ( Config.record ) {
+    WvOut2 wv;
+    "concrete-mixer-output" => wv.autoPrefix;
+
+    // this is the output file name
+    "special:auto" => wv.wavFilename;
+
+    Mixer.fxIn => blackhole;
+    dac => wv => blackhole;
+    null @=> wv;
+}
+
+while ( ! Config.ended ){
+    1::second => now;
 }

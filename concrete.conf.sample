@@ -1,0 +1,73 @@
+#    Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
+#
+#    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
+#        https://github.com/concrete-mixer/concrete-mixer
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+#    U.S.A.
+
+
+# Path to chuck binary. Defaults to location in Concrète Mixer package
+# On non-rpi machines you'll need to install ChucK yourself. See:
+# http://chuck.cs.princeton.edu/release/
+chuckPath=./chuck
+
+# Path to chuck chugin plugins. Note Concrète Mixer is supplied with two Chugins
+# but these are compiled for Arm Raspberry Pi architecture. If using with Intel
+# processors you will need to compile your own chugins. See
+# https://github.com/ccrma/chugins
+chuginPath=lib/chugins
+
+# bpm (beats per minute)
+# Most of the system's timed parameters (eg delay times or slow oscillator
+# frequencies) will be aligned to this fractions or multiples of this bpm value.
+# If you are working with recordings containing percussion you can specify a
+# compatible tempo (including decimal values if required)
+bpm=90.0
+
+# Is this meant to be played on an RPI? May attempt less CPU-intensive work
+# 1 for yes, 0 for no
+rpi=0
+
+# Chuck bufsize parameter
+bufsize=2048
+
+# Chuck samplerate parameter
+srate=44100
+
+# record each iteration of Concrete Mixer to a wav file
+# 1 enabled recording, 0 disabled
+record=0
+
+# Config for 'concrete mode' (mode set in conf/global.conf).
+
+# Specify the maximum number of sounds to play simultaneously
+# Note: lower the number of sounds to lessen CPU load
+concurrentSounds=2
+
+# Path to audio files for 'main' sounds, eg audiomainpath=/home/pi/mainsounds
+audioMainPath=/home/pi/audio/main
+
+# If you have sounds you want to play against 'main' sounds rather than
+# themselves, you can specify a directoy path here
+audioAltPath=/home/pi/audio/altsounds
+
+# FX settings
+fxChainEnabled=1
+
+# Endless play means that when we've run out of sounds to play we
+# restart the app.
+endlessPlay=0
+

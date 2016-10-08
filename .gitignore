@@ -1,8 +1,5 @@
 *.swp
 *.swo
 *.wav
-audio
 TODO*
-/playSound.ck
-/playFxChain.ck
-conf/*.conf
+*.conf
