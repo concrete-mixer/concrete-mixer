@@ -103,7 +103,7 @@ class Dispatch {
         }
         else {
             Config.mainFiles @=> target;
-            Config.audioMainPath.path + "/" + file => filePath;
+            Config.audioMainPath.path => filePath;
         }
 
         // if target array empty return empty string
