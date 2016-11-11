@@ -55,6 +55,7 @@ Machine.add(lib_path + "Fx/FxPassthrough.ck");
 // Used by playSound to alter signal
 // requires some fx libs, so added here
 Machine.add(lib_path + "Utilities/AlterSignal.ck");
+Machine.add(lib_path + "FxChain.ck");
 
 // Finally Dispatch.ck manages execution of the app
 Machine.add(lib_path + "Dispatch.ck");
