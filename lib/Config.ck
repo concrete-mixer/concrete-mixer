@@ -27,7 +27,6 @@ class FilePath {
 }
 
 public class Config {
-    static string altFiles[];
     static FilePath @ audioAltPath;
     static FilePath @ audioMainPath;
     static float bpm;
@@ -35,20 +34,17 @@ public class Config {
     static int concurrentSounds;
     static int endlessPlay;
     static int fxChainEnabled;
-    static string mainFiles[];
     static int record;
     static int rpi;
     static int srate;
     static int ended;
+    static int fxUsed[];
 }
 
 class ConfigSet {
     fun void initialise() {
         _setDefaultValues();
         _setValuesFromConfig();
-
-        _setFileLists("main");
-        _setFileLists("alt");
     }
 
     // initialise values with defaults
@@ -139,52 +135,6 @@ class ConfigSet {
         if ( key == "audioAltPath" ) {
             new FilePath @=> Config.audioAltPath;
             stringValue @=> Config.audioAltPath.path;
-        }
-    }
-
-    fun void _setFileLists(string type) {
-        FileIO fileList;
-
-        if ( type == "main" ) {
-            fileList.open(Config.audioMainPath.path);
-            _processFileList( fileList.dirList() ) @=> Config.mainFiles;
-        }
-
-        if ( type == "alt" && Config.audioAltPath.path != "" ) {
-            fileList.open(Config.audioAltPath.path);
-            _processFileList( fileList.dirList() ) @=> Config.altFiles;
-        }
-
-        fileList.close();
-    }
-
-    fun string[] _processFileList( string fileList[] ) {
-        string wavsFound[0];
-
-        for ( 0 => int i; i < fileList.cap(); i++ ) {
-            if ( RegEx.match(".wav$", fileList[i]) ) {
-                wavsFound << fileList[i];
-            }
-        }
-
-        return wavsFound;
-    }
-
-    fun void printFileList(string type) {
-        string target[];
-
-        chout <= type <= IO.nl();
-
-        if ( type == "main" ) {
-            Config.mainFiles @=> target;
-        }
-
-        if ( type == "alt" ) {
-            Config.altFiles @=> target;
-        }
-
-        for ( 0 => int i; i < target.cap(); i++ ) {
-            chout <= target[i] <= IO.nl();
         }
     }
 

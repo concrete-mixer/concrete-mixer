@@ -27,10 +27,12 @@ class Dispatch {
     int streamsActive[0];
     Fader f;
 
+    SoundFiles sf;
+
     fun void initialise() {
         0 => int altSent;
 
-        if ( Config.mainFiles.size() == 0 ) {
+        if ( sf.main.size() == 0 ) {
             me.exit();
         }
 
@@ -39,7 +41,7 @@ class Dispatch {
         for ( 0 => int i; i < Config.concurrentSounds; i++ ) {
             string filePath;
 
-            if ( Config.altFiles.size() && ! altSent ) {
+            if ( sf.alt.size() && ! altSent ) {
                 1 => altSent;
                 playSound("alt", i);
             }
@@ -98,11 +100,11 @@ class Dispatch {
         string file, filePath;
 
         if ( type == "alt" ) {
-            Config.altFiles @=> target;
+            sf.alt @=> target;
             Config.audioAltPath.path => filePath;
         }
         else {
-            Config.mainFiles @=> target;
+            sf.main @=> target;
             Config.audioMainPath.path => filePath;
         }
 
@@ -128,10 +130,10 @@ class Dispatch {
         string file, filePath;
 
         if ( type == "alt" ) {
-            Config.altFiles @=> target;
+            sf.alt @=> target;
         }
         else {
-            Config.mainFiles @=> target;
+            sf.main @=> target;
         }
 
         target.size() => int size;
@@ -144,10 +146,10 @@ class Dispatch {
         }
 
         if ( type == "alt" ) {
-            newArray @=> Config.altFiles;
+            newArray @=> sf.alt;
         }
         else {
-            newArray @=> Config.mainFiles;
+            newArray @=> sf.main;
         }
     }
 
