@@ -24,10 +24,21 @@
 class Dispatch {
     0 => int fxMachineId;
     0 => int ending;
+
     int streamsActive[0];
     Fader f;
 
     SoundFiles sf;
+
+    26 => int fxChainsCount;
+
+    if ( Config.rpi ) {
+        20 => fxChainsCount;
+    }
+
+    int fxChainsUsed[0];
+
+    Chooser c;
 
     fun void initialise() {
         0 => int altSent;
@@ -53,9 +64,11 @@ class Dispatch {
         }
 
         if ( Config.fxChainEnabled ) {
+            getFxChain() => int fxChain;
+
             // keep track of the machine id for fx chain so we can scupper it
             // when file playback is complete.
-            Machine.add(me.dir() + "playFxChain.ck") => fxMachineId;
+            Machine.add(me.dir() + "playFxChain.ck:" + fxChain) => fxMachineId;
         }
 
         OscIn oin;
@@ -88,7 +101,12 @@ class Dispatch {
                 }
 
                 if ( msg.address == "/playfxchain" ) {
-                    Machine.add(me.dir() + "playFxChain.ck") => fxMachineId;
+                    getFxChain() => int fxChain;
+
+                    // keep track of the machine id for fx chain so we can scupper it
+                    // when file playback is complete.
+
+                    Machine.add(me.dir() + "playFxChain.ck:" + fxChain) => fxMachineId;
                 }
             }
         }
@@ -200,6 +218,25 @@ class Dispatch {
         <<< "Dispatcher signing out" >>>;
 
         me.exit();
+    }
+
+    fun int getFxChain() {
+        if ( fxChainsUsed.size() == fxChainsCount ) {
+            int fxChainsUsed[0];
+        }
+
+        c.getInt(1, fxChainsCount) => int choice;
+
+        for (int i; i < fxChainsUsed.size(); i++ ) {
+            if ( fxChainsUsed[i] == choice ) {
+                // find another choice
+                return getFxChain();
+            }
+        }
+
+        fxChainsUsed << choice;
+
+        return choice;
     }
 }
 

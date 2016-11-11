@@ -31,15 +31,7 @@ public class FxChain {
         outputPan.right => outRight;
     }
 
-    fun void fxChainBuild() {
-        26 => int max;
-
-        if ( Config.rpi ) {
-            25 => max;
-        }
-
-        Math.random2(1, max) => int choice;
-
+    fun void fxChainBuild(int choice) {
         // Define the fx chains. Originally we defined them randomly
         // but this meant much of the time the resulting chains were
         // suboptimal, if not nonsensical, so here we (lengthily) define

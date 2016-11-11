@@ -33,7 +33,9 @@ Chooser chooser;
 
 FxChain chain;
 
-chain.fxChainBuild();
+Std.atoi(me.arg(0)) => int chainChoice;
+
+chain.fxChainBuild(chainChoice);
 
 // determine how long the chain will play for
 [ 16, 20, 24, 28, 32 ] @=> int bars[];
