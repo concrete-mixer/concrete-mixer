@@ -53,7 +53,7 @@ class Dispatch {
         if ( Config.fxChainEnabled ) {
             // keep track of the machine id for fx chain so we can scupper it
             // when file playback is complete.
-            Machine.add(me.dir() + "../playFxChain.ck") => fxMachineId;
+            Machine.add(me.dir() + "playFxChain.ck") => fxMachineId;
         }
 
         OscIn oin;
@@ -86,7 +86,7 @@ class Dispatch {
                 }
 
                 if ( msg.address == "/playfxchain" ) {
-                    Machine.add(me.dir() + "../playFxChain.ck") => fxMachineId;
+                    Machine.add(me.dir() + "playFxChain.ck") => fxMachineId;
                 }
             }
         }
@@ -155,7 +155,7 @@ class Dispatch {
         getFileToPlay(type) => string filePath;
 
         if ( filePath != "" ) {
-            me.dir() + "../playSound.ck:" + filePath + ":" + type + ":" + stream => string args;
+            me.dir() + "playSound.ck:" + filePath + ":" + type + ":" + stream => string args;
 
             Machine.add(args);
         }
