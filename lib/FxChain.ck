@@ -211,7 +211,6 @@ public class FxChain {
         if ( choice == 23 ) {
             [
                 new FxFilter,
-                new FxGate,
                 new FxDelayVariable,
                 new FxReverseDelay
             ] @=> fxChain;
