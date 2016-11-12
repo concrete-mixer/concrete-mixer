@@ -27,19 +27,20 @@ ENDLESS_PLAY=0
 if [ ! -f ./concrete.conf ]
 then
     echo "concrete.conf is not available. Please read README.md for instructions"
-else
-    ENDLESS_PLAY=`awk 'match($0, /^endlessPlay=(1|0)$/) { print substr($0, 13, 1) }' ./concrete.conf`
+    exit
 fi
+
+# Here things get a bit awk-ward.
+ENDLESS_PLAY=`awk 'match($0, /^endlessPlay=(1|0)$/) { print substr($0, 13, 1) }' ./concrete.conf`
+BUFSIZE=`awk 'match($0, /^bufsize=[0-9]+$/) { print substr($0, 9) }' ./concrete.conf`
+SRATE=`awk 'match($0, /^srate=[0-9]+$/) { print substr($0, 7) }' ./concrete.conf`
+
+echo $BUFSIZE $SRATE
 
 # By default, use version of chuck bundled with Concrete Mixer
 # (compiled for rpi)
-CHUCK_PATH=./chuck
-
-# But for preference, use any locally installed version of chuck
-if [ -x /usr/local/bin/chuck ]
-then
-    CHUCK_PATH=/usr/local/bin/chuck
-fi
+CHUCK_PATH=/usr/local/bin/chuck
+CHUGIN_PATH=/usr/local/lib/chuck
 
 if [[ "$ENDLESS_PLAY" == 1 ]]
 then
@@ -47,7 +48,7 @@ then
     echo "Running Concrete Mixer for eternity, if possible"
     while [ true ]
     do
-        $CHUCK_PATH concrete.ck || break
+        $CHUCK_PATH concrete.ck chugin-path:$CHUGIN_PATH srate:$SRATE bufsize:$BUFSIZE || break
     done
 else
     # Else, run just the once.
