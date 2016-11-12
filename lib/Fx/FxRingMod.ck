@@ -34,7 +34,7 @@ public class FxRingMod extends Fx {
     }
 
     fun void initialise() {
-        c.getFloat( 220, 550 ) => freq => sine.freq;
+        c.getFloat( 110, 330 ) => freq => sine.freq;
 
         spork ~ activity();
     }
@@ -81,7 +81,7 @@ public class FxRingMod extends Fx {
     }
 
     fun float getFreq() {
-        [ 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 12.0 ] @=> float factors[];
+        [ 0.25, 0.5, 1.0, 2.0, 4.0 ] @=> float factors[];
 
         c.getInt( 0, factors.cap() -1 ) => int choice;
 
