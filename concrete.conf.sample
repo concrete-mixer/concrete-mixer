@@ -19,20 +19,17 @@
 #    U.S.A.
 
 
-# Path to chuck binary. Defaults to location in Concrète Mixer package
-# On non-rpi machines you'll need to install ChucK yourself. See:
-# http://chuck.cs.princeton.edu/release/
-chuckPath=./chuck
+# Path to chuck binary. The default is the path ChucK source installs to. You
+# can specify a different path if required.
+chuckPath=/usr/local/bin/chuck
 
-# Path to chuck chugin plugins. Note Concrète Mixer is supplied with two Chugins
-# but these are compiled for Arm Raspberry Pi architecture. If using with Intel
-# processors you will need to compile your own chugins. See
-# https://github.com/ccrma/chugins
-chuginPath=lib/chugins
+# Path to chuck chugin plugins. The default is the path chugin source installs
+# to. You can specify a different path if required.
+chuginPath=/usr/local/lib/chuck
 
 # bpm (beats per minute)
 # Most of the system's timed parameters (eg delay times or slow oscillator
-# frequencies) will be aligned to this fractions or multiples of this bpm value.
+# frequencies) will be aligned to fractions or multiples of this value.
 # If you are working with recordings containing percussion you can specify a
 # compatible tempo (including decimal values if required)
 bpm=90.0
@@ -62,12 +59,11 @@ audioMainPath=/home/pi/audio/main
 
 # If you have sounds you want to play against 'main' sounds rather than
 # themselves, you can specify a directoy path here
-audioAltPath=/home/pi/audio/altsounds
+audioAltPath=/home/pi/audio/alt
 
-# FX settings
+# FX settings. 1 for enabled, 0 for disabled
 fxChainEnabled=1
 
 # Endless play means that when we've run out of sounds to play we
-# restart the app.
+# restart the app. 1 for endless, 0 for one-off.
 endlessPlay=0
-

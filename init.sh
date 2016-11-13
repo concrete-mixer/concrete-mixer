@@ -31,16 +31,19 @@ then
 fi
 
 # Here things get a bit awk-ward.
+CHUCK_PATH=`awk 'match($0, /^chuckPath=.*$/) { print substr($0, 11) }' ./concrete.conf`
+CHUGIN_PATH=`awk 'match($0, /^chuginPath=.*$/) { print substr($0, 12) }' ./concrete.conf`
 ENDLESS_PLAY=`awk 'match($0, /^endlessPlay=(1|0)$/) { print substr($0, 13, 1) }' ./concrete.conf`
 BUFSIZE=`awk 'match($0, /^bufsize=[0-9]+$/) { print substr($0, 9) }' ./concrete.conf`
 SRATE=`awk 'match($0, /^srate=[0-9]+$/) { print substr($0, 7) }' ./concrete.conf`
 
-echo $BUFSIZE $SRATE
+echo $CHUCK_PATH $CHUGIN_PATH $BUFSIZE $SRATE
 
-# By default, use version of chuck bundled with Concrete Mixer
-# (compiled for rpi)
-CHUCK_PATH=/usr/local/bin/chuck
-CHUGIN_PATH=/usr/local/lib/chuck
+if [[ ! -x $CHUCK_PATH || ! -x $CHUGIN_PATH ]]
+then
+    echo Chuck path or chugin path not available
+    exit
+fi
 
 if [[ "$ENDLESS_PLAY" == 1 ]]
 then

@@ -16,28 +16,37 @@ The audio processing is written in [ChucK](http://chuck.cs.princeton.edu). A sma
 
 ## Prerequisites
 
-Concrète Mixer is intended for use on a Raspberry Pi 2 Model B running [Rasbpian](https://www.raspbian.org/). (Earlier Pi models *may* work with overclocking and special configuration settings applied.) In principle though, Concrète Mixer will run on any OSes/devices on which Perl and ChucK are available.
+Concrète Mixer is intended for use on the latest model of Raspberry Pi (currently Raspberry Pi 3) running [Rasbpian](https://www.raspbian.org/) GNU/Linux. Earlier Pi models *may* work with overclocking and special configuration settings applied. (In principle though, Concrète Mixer will run on any OSes and devices on which ChucK will run. YMMV.)
 
-Finally, basic familiarity with running shell commands in linux is required.
+Basic familiarity with running shell commands in linux, as well as installing and configuring Raspbian is required.
 
 ## Installation and operation
 
-1. The first thing you'll need is a set of sound files you want the software to mix. If you don't yet have a collection of sound files, you can [use the Concrète Mixer demo files](https://s3-us-west-1.amazonaws.com/concrete-mixer/concrete-mixer-files.zip). See [Tips](#tips) regarding using your own sound files.
+The following procedure will get you up and running with Concrete Mixer utilising a sound library I've made available for evaluatory use.
 
-2. Visit the [Concrète Mixer GitHub page](https://github.com/concrete-mixer/concrete-mixer) and click the [Download ZIP](https://github.com/concrete-mixer/concrete-mixer/archive/master.zip) link.
+1. Install ChucK prerequisites:
+``sudo apt update && sudo apt --assume-yes install git libsndfile1-dev bison flex libasound2-dev flac``
 
-3. Unzip the code:
-``$ unzip concrete-mixer-master.zip``
+2. Clone ChucK from github repo, compile and install:
+``git clone https://github.com/ccrma/chuck``
+``cd chuck/src && make linux-alsa && sudo make install && cd -``
 
-4. After unzipping you should have a directory called 'concrete-mixer-master'. Enter that directory and run the following commands to set up the config files:
-``$ cp conf/global.conf.sample conf/global.conf``
-``$ cp conf/concrete.conf.sample conf/concrete.conf``
+3. Clone the ChucK chugins (plugins) repo:
+``git clone https://github.com/ccrma/chugins``
+``cd chugins && make linux-alsa && sudo make install && cd -``
 
-5. Edit conf/concrete.conf and specify a directory location for your sounds:
-``audioMainPath=<insert your dir here>``
-Note that you can also supply a path for a second directory (audioAltPath) for sounds that you don't want to be played against each other; instead these sounds will be mixed with the 'main' sounds.
+4. Download the audio files:
+``wget https://www.dropbox.com/s/dvk4aoztqhzwkhc/concrete-mixer-files.zip && unzip concrete-mixer-files.zip``
 
-6. Run the app typing the following from your app's directory:
+5. Unpack the audio files:
+``cd audio/main && flac -d *.flac --delete-input-file && cd -``
+``cd audio/alt && flac -d *.flac --delete-input-file && cd -``
+
+6. Install Concrete Mixer:
+``git clone https://github.com/concrete-mixer/concrete-mixer``
+``cd concrete-mixer && cp concrete.conf.sample concrete.conf``
+
+7. Finally, run Concrète Mixer:
 ``./init.sh``
 
 ### Making a Raspberry Pi into a Concrète Mixer
@@ -67,9 +76,13 @@ This code will invoke Concrète Mixer if the current terminal is tty1. This mean
 
 7. Save the file and restart the Pi. All going well, the Pi should start playing sound automatically after reboot.
 
+## Configuration options
+
+A list of configuration options is documented in concrete.conf.sample.
+
 ## The art of Concrèting
 
-### <a name="tips">Tips
+### Tips
 * From experience sound files of about 90 seconds to two and a half minutes seem to work best in terms of the flow of the mix, but this will depend on the dynamics of the recording and (to a large degree) the taste of the listener.
 * You should mix the samples' levels to be generally consistent so that any one sample should not be disproportionately louder than any other.
 * You can specify several configuration options in the conf/concrete.conf file. Read concrete.conf.sample for more options.
@@ -78,14 +91,12 @@ This code will invoke Concrète Mixer if the current terminal is tty1. This mean
 
 #### Running Concrète Mixer on other devices
 
-You should be able to run Concrète Mixer GNU/Linux and OSX systems without much trouble as long as you have ChucK compiled and a bash shell; on Windows things should work as long as you can pass the ./concrete.ck file to ChucK in some way and the config file loads and file paths can be negotiated.
+You should be able to run Concrète Mixer GNU/Linux and OSX systems without much trouble as long as you have ChucK compiled and a bash shell; on Windows things should work as long as you can pass the ./concrete.ck file to ChucK and the config file loads and file paths can be negotiated.
 * [Information on how to install ChucK on various platforms](http://chuck.cs.princeton.edu/release)
-
-Note that on other platforms the ChucK executable and chugin files included with Concrète Mixer will not work as it has been compiled for the Pi. To use Concrète Mixer on other platforms you'll need to change the concrete.conf file to point to a different ChucK executable (read the config file for more details).
 
 ## Licence
 
-This code is distributed under the GPL v2. See the COPYING file for more details. The ChucK binary is also GPL v2.
+This code is distributed under the GPL v2. See the COPYING file for more details.
 
 ## Acknowledgments
 
