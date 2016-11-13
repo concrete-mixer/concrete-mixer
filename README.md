@@ -25,29 +25,29 @@ Basic familiarity with running shell commands in linux, as well as installing an
 The following procedure will get you up and running with Concrete Mixer utilising a sound library I've made available for evaluatory use.
 
 1. Install ChucK prerequisites:
-``sudo apt update && sudo apt --assume-yes install git libsndfile1-dev bison flex libasound2-dev flac``
+```sudo apt update && sudo apt --assume-yes install git libsndfile1-dev bison flex libasound2-dev flac```
 
 2. Clone ChucK from github repo, compile and install:
-``git clone https://github.com/ccrma/chuck``
-``cd chuck/src && make linux-alsa && sudo make install && cd -``
+```git clone https://github.com/ccrma/chuck```
+```cd chuck/src && make linux-alsa && sudo make install && cd -```
 
 3. Clone the ChucK chugins (plugins) repo:
-``git clone https://github.com/ccrma/chugins``
-``cd chugins && make linux-alsa && sudo make install && cd -``
+```git clone https://github.com/ccrma/chugins```
+```cd chugins && make linux-alsa && sudo make install && cd -```
 
 4. Download the audio files:
-``wget https://www.dropbox.com/s/dvk4aoztqhzwkhc/concrete-mixer-files.zip && unzip concrete-mixer-files.zip``
+```wget https://www.dropbox.com/s/dvk4aoztqhzwkhc/concrete-mixer-files.zip && unzip concrete-mixer-files.zip```
 
 5. Unpack the audio files:
-``cd audio/main && flac -d *.flac --delete-input-file && cd -``
-``cd audio/alt && flac -d *.flac --delete-input-file && cd -``
+```cd audio/main && flac -d *.flac --delete-input-file && cd -```
+```cd audio/alt && flac -d *.flac --delete-input-file && cd -```
 
 6. Install Concrete Mixer:
-``git clone https://github.com/concrete-mixer/concrete-mixer``
-``cd concrete-mixer && cp concrete.conf.sample concrete.conf``
+```git clone https://github.com/concrete-mixer/concrete-mixer```
+```cd concrete-mixer && cp concrete.conf.sample concrete.conf```
 
 7. Finally, run Concrète Mixer:
-``./init.sh``
+```./init.sh```
 
 ### Making a Raspberry Pi into a Concrète Mixer
 
@@ -66,12 +66,12 @@ The intention of Concrète Mixer is to turn a Pi into a single-purpose sound mac
     ``nano /home/pi/.bashrc``.
 
 6. At the bottom of the file, add the following lines:
-<code>
+```
     if [ $(tty) == /dev/tty1 ]; then
         cd ~/concrete-mixer
         ./init.sh
     fi
-</code>
+```
 This code will invoke Concrète Mixer if the current terminal is tty1. This means you can run the program in one terminal and use other terminals as required.
 
 7. Save the file and restart the Pi. All going well, the Pi should start playing sound automatically after reboot.
@@ -82,14 +82,13 @@ A list of configuration options is documented in concrete.conf.sample.
 
 ## The art of Concrèting
 
-### Tips
 * From experience sound files of about 90 seconds to two and a half minutes seem to work best in terms of the flow of the mix, but this will depend on the dynamics of the recording and (to a large degree) the taste of the listener.
 * You should mix the samples' levels to be generally consistent so that any one sample should not be disproportionately louder than any other.
 * You can specify several configuration options in the conf/concrete.conf file. Read concrete.conf.sample for more options.
 * The Pi's analogue audio output is noisy; if possible use an HDMI audio splitter (preferably powered), or a USB sound card.
 * The chuck executable file distributed with Concrète Mixer was compiled on a Raspberry Pi 2 Model B. This binary *may not* work on earlier or later Pi Models depending on their CPU architecture. If your Pi is incompatible, you can always download and compile a ChucK binary yourself; see the [ChucK download page](http://chuck.cs.princeton.edu/release/).
 
-#### Running Concrète Mixer on other devices
+## Running Concrète Mixer on other devices
 
 You should be able to run Concrète Mixer GNU/Linux and OSX systems without much trouble as long as you have ChucK compiled and a bash shell; on Windows things should work as long as you can pass the ./concrete.ck file to ChucK and the config file loads and file paths can be negotiated.
 * [Information on how to install ChucK on various platforms](http://chuck.cs.princeton.edu/release)
@@ -97,10 +96,6 @@ You should be able to run Concrète Mixer GNU/Linux and OSX systems without much
 ## Licence
 
 This code is distributed under the GPL v2. See the COPYING file for more details.
-
-## Acknowledgments
-
-Many thanks to the [ChucK authors](http://chuck.cs.princeton.edu/doc/authors.html), especially for giving me their blessing to include the chuck binary with this program.
 
 ## Contact
 <concretemixer.audio@gmail.com>
