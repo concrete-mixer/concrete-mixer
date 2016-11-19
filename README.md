@@ -126,7 +126,8 @@ A list of configuration options is documented in concrete.conf.sample.
 
 * From experience sound files of about 90 seconds to two and a half minutes seem to work best in terms of the flow of the mix, but this will depend on the dynamics of the recording and (to a large degree) the taste of the listener.
 * You should mix the samples' levels to be generally consistent so that any one sample should not be disproportionately louder than any other.
-* You can specify several configuration options in the conf/concrete.conf file. Refer to concrete.conf.sample for more options.
+* You can specify several configuration options in the conf/concrete.conf file. Refer to `concrete.conf.sample` for more options.
+    * If you're having performance difficulties you can enable the rpi setting by setting rpi=1 in `concrete.conf`. This setting utilises a less CPU-intensive reverb ugen and also refrains from using a reverse delay chugen.
 * The Pi's analogue audio output is noisy; better sound may be obtained by:
     * routing digital audio through HDMI (run `raspi-config` > `Advanced options` > `Audio` to achieve this), and using an HDMI adapter with an audio out (preferably powered)
     * installing and using a USB sound card.

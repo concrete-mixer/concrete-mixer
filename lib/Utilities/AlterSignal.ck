@@ -60,19 +60,15 @@ public class AlterSignal {
         }
 
         if ( choice == 5 ) {
-            dawdle();
-        }
-
-        if ( choice == 6 ) {
             panBuf();
         }
 
-        if ( choice == 7 ) {
+        if ( choice == 6 ) {
             pitchOsc();
         }
 
         // all other choices involve applying Fx modules
-        if ( choice > 7 ) {
+        if ( choice > 6 ) {
             effecto(choice);
         }
     }
@@ -109,36 +105,36 @@ public class AlterSignal {
     fun void effecto( int choice ) {
         Fx effect;
 
-        if ( choice == 7 ) {
+        if ( choice == 6 ) {
             new FxReverb @=> effect;
         }
 
-        if ( choice == 8 ) {
+        if ( choice == 7 ) {
             new FxFlanger @=> effect;
         }
 
-        if ( choice == 9 ) {
+        if ( choice == 8 ) {
             new FxDelayVariable @=> effect;
         }
 
-        if ( choice == 10 ) {
+        if ( choice == 9 ) {
             new FxDelay @=> effect;
         }
 
-        if ( choice == 11 ) {
+        if ( choice == 10 ) {
             new FxDownSampler @=> effect;
         }
 
-        if ( choice == 12 ) {
+        if ( choice == 11 ) {
             new FxRingMod @=> effect;
         }
 
-        if ( choice == 13 ) {
+        if ( choice == 12 ) {
             new FxFeedback @=> effect;
         }
 
         // the following not invoked if Config.rpi
-        if ( choice == 14 ) {
+        if ( choice == 13 ) {
             new FxReverseDelay @=> effect;
         }
 
@@ -214,10 +210,10 @@ public class AlterSignal {
 
     fun void reverse() {
         logSignalChange("Reversing");
-        setRate( -1.0 );
+        -1.0 => buf.rate;
         duration => now;
         logSignalChange("Unreversing");
-        setRate( 1.0 );
+        1.0 => buf.rate;
     }
 
     fun void reepeat() {
@@ -242,14 +238,14 @@ public class AlterSignal {
             repeatoPos => buf.pos;
 
             if ( ! c.getInt( 0, 3 ) ) {
-                setRate( -1 );
+                -1 => buf.rate;
             }
             else {
-                setRate( 1 );
+                1 => buf.rate;
             }
         }
 
-        setRate( 1 );
+        1 => buf.rate;
 
         f.fadeInBlocking( miniFadeTime, 0.8, buf );
     }
@@ -293,10 +289,10 @@ public class AlterSignal {
             buf.rate() => currRate;
 
             if ( type == "up" ) {
-                setRate( currRate + rateIncrement );
+                currRate + rateIncrement => buf.rate;
             }
             else {
-                setRate( currRate - rateIncrement );
+                currRate - rateIncrement => buf.rate;
             }
 
             timeIncrement => now;
@@ -321,58 +317,6 @@ public class AlterSignal {
             newdur => durdur;
             buf.rate( 1 );
         }
-    }
-
-    // Make playback run slower by oscillating back and forth
-    // This didn't sound as interesting as you'd think, esp
-    // with environmental sounds where the action is often spaced out
-    // so I've made it a bit more interesting by randomly changing the
-    // pitch. As you do.
-    fun void dawdle() {
-        logSignalChange("Dawdle");
-
-        [ 2, 3, 4, 5, 5, 7, 9, 10 ] @=> int forwardRatios[];
-        [ 1, 1, 1, 1, 2, 2, 2, 3  ] @=> int backwardRatios[];
-
-        100::samp => dur fadeDur;
-        buf.gain() => float origGain;
-        dur stepDur;
-
-        while ( duration > stepDur ) {
-            c.getInt( 0, forwardRatios.cap() - 1 ) => int choice;
-            forwardRatios[ choice ] => int forwardRatio;
-            backwardRatios[ choice ] => int backwardRatio;
-
-            Time.beatDur / 16 => dur dur64;
-            dur64 * forwardRatio => dur forwardDur;
-
-            dur64 / samp => float dur64samples;
-            dur64samples $int * backwardRatio $ int => int backwardSamples;
-
-            f.fadeOutBlocking( fadeDur, buf );
-
-            f.fadeIn( fadeDur, origGain, buf );
-
-            if ( c.getInt( 0, 1 ) ) {
-                [ 0.8, 1.2, 1.5 ] @=> float pitches[];
-
-                pitches[ c.getInt(0, pitches.cap() -1 ) ] => buf.rate;
-            }
-
-            forwardDur - fadeDur => now;
-            f.fadeOutBlocking( fadeDur, buf );
-            buf.pos() - backwardSamples => buf.pos;
-            forwardDur -=> duration;
-            1.0 => buf.rate;
-        }
-
-        f.fadeInBlocking( fadeDur, origGain, buf );
-    }
-
-    // a utility function that made sense at the time
-    // though just chucking args to buf.rate seems fine now...
-    fun void setRate( float rate ) {
-        buf.rate( rate );
     }
 
     fun void pitchOsc() {

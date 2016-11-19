@@ -19,14 +19,6 @@
 #    U.S.A.
 
 
-# Path to chuck binary. The default is the path ChucK source installs to. You
-# can specify a different path if required.
-chuckPath=/usr/local/bin/chuck
-
-# Path to chuck chugin plugins. The default is the path chugin source installs
-# to. You can specify a different path if required.
-chuginPath=/usr/local/lib/chuck
-
 # bpm (beats per minute)
 # Most of the system's timed parameters (eg delay times or slow oscillator
 # frequencies) will be aligned to fractions or multiples of this value.
@@ -47,8 +39,6 @@ srate=44100
 # record each iteration of Concrete Mixer to a wav file
 # 1 enabled recording, 0 disabled
 record=0
-
-# Config for 'concrete mode' (mode set in conf/global.conf).
 
 # Specify the maximum number of sounds to play simultaneously
 # Note: lower the number of sounds to lessen CPU load
