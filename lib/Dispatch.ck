@@ -28,8 +28,6 @@ class Dispatch {
     int streamsActive[0];
     Fader f;
 
-    SoundFiles sf;
-
     26 => int fxChainsCount;
 
     if ( Config.rpi ) {
@@ -43,24 +41,26 @@ class Dispatch {
     fun void initialise() {
         0 => int altSent;
 
-        if ( sf.main.size() == 0 ) {
-            me.exit();
-        }
+        for ( 0 => int i; i < Config.streamData.streamsAvailable.size(); i++ ) {
+            Config.streamData.streamsAvailable[i] => string stream;
 
-        streamsActive.size(Config.concurrentSounds);
+            // set concurrent sounds for each stream to 1 by default
+            1 => int concurrentSounds;
 
-        for ( 0 => int i; i < Config.concurrentSounds; i++ ) {
-            string filePath;
-
-            if ( sf.alt.size() && ! altSent ) {
-                1 => altSent;
-                playSound("alt", i);
-            }
-            else {
-                playSound("main", i);
+            if ( Config.streamData.concurrentSounds[stream] ) {
+                Config.streamData.concurrentSounds[stream] => concurrentSounds;
             }
 
-            1 => streamsActive[i];
+            for ( 0 => int j; j < concurrentSounds; j++ ) {
+                if ( Config.streamData.files[stream].size() ) {
+                    playSound(stream);
+                    1 => streamsActive[stream];
+                }
+                else {
+                    <<< "No files available for stream", stream, "exiting" >>>;
+                    me.exit();
+                }
+            }
         }
 
         if ( Config.fxChainEnabled ) {
@@ -74,9 +74,7 @@ class Dispatch {
         OscIn oin;
         3141 => oin.port;
 
-        "/playsound/alt" => oin.addAddress;
-        "/playsound/main" => oin.addAddress;
-        "/playsound/streamlength" => oin.addAddress;
+        "/playsound" => oin.addAddress;
         "/playfxchain" => oin.addAddress;
 
         OscMsg msg;
@@ -87,17 +85,13 @@ class Dispatch {
             oin => now;
 
             while(oin.recv(msg)) {
-                // stream is always the first args if there are args
-                msg.getInt(0) => int stream;
+                // stream is always the first arg if there are args
+                msg.getString(0) => string stream;
 
                 chout <= "Received " <= msg.address <= IO.nl();
 
-                if ( msg.address == "/playsound/alt" ) {
-                    playSound("alt", stream);
-                }
-
-                if ( msg.address == "/playsound/main" ) {
-                    playSound("main", stream);
+                if ( msg.address == "/playsound" ) {
+                    playSound(stream);
                 }
 
                 if ( msg.address == "/playfxchain" ) {
@@ -112,19 +106,12 @@ class Dispatch {
         }
     }
 
-    fun string getFileToPlay(string type) {
+    fun string getFileToPlay(string stream) {
         // set up our vars
         string target[];
-        string file, filePath;
+        string file;
 
-        if ( type == "alt" ) {
-            sf.alt @=> target;
-            Config.audioAltPath.path => filePath;
-        }
-        else {
-            sf.main @=> target;
-            Config.audioMainPath.path => filePath;
-        }
+        Config.streamData.files[stream] @=> target;
 
         // if target array empty return empty string
         // means playSound.ck won't be invoked
@@ -136,23 +123,18 @@ class Dispatch {
 
         target[key] => file;
 
-        removeFile(key, type);
+        removeFile(key, stream);
 
-        return filePath + "/" + file;
+        return Config.streamData.filePaths[stream] + "/" + file;
     }
 
-    fun void removeFile(int key, string type) {
+    fun void removeFile(int key, string stream) {
         // because ChucK is fucking primitive, we can't remove items from
         // an array - we have to reconstruct it
         string target[];
         string file, filePath;
 
-        if ( type == "alt" ) {
-            sf.alt @=> target;
-        }
-        else {
-            sf.main @=> target;
-        }
+        Config.streamData.files[stream] @=> target;
 
         target.size() => int size;
         string newArray[0];
@@ -163,32 +145,27 @@ class Dispatch {
             }
         }
 
-        if ( type == "alt" ) {
-            newArray @=> sf.alt;
-        }
-        else {
-            newArray @=> sf.main;
-        }
+        newArray @=> Config.streamData.files[stream];
     }
 
-    fun int playSound( string type, int stream ) {
-        getFileToPlay(type) => string filePath;
+    fun void playSound( string stream ) {
+        getFileToPlay(stream) => string filePath;
 
         if ( filePath != "" ) {
-            me.dir() + "playSound.ck:" + filePath + ":" + type + ":" + stream => string args;
+            me.dir() + "playSound.ck:" + filePath + ":" + stream => string args;
 
             Machine.add(args);
         }
         else {
             0 => streamsActive[stream];
 
-            if ( lastStream(stream) ) {
+            if ( lastStream() ) {
                 endActivity();
             }
         }
     }
 
-    fun int lastStream(int stream) {
+    fun int lastStream() {
         1 => int streamIsLast;
 
         // Determine if any streams are still active

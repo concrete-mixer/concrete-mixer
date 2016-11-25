@@ -18,6 +18,13 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 #    U.S.A.
 
+# Path to chuck binary. Defaults to ChucK standard linux install path
+# Change to specify a different path
+chuckPath=/usr/local/bin/chuck
+
+# Path to chuck chugin plugins. Default is chugin standard linux install path.
+# Uncomment and change to specify a different path
+chuginPath=/usr/local/lib/chuck
 
 # bpm (beats per minute)
 # Most of the system's timed parameters (eg delay times or slow oscillator
@@ -33,6 +40,9 @@ rpi=0
 # Chuck bufsize parameter
 bufsize=2048
 
+# Chunk size for SndBuf file loading
+sndBufChunks=2048
+
 # Chuck samplerate parameter
 srate=44100
 
@@ -40,16 +50,21 @@ srate=44100
 # 1 enabled recording, 0 disabled
 record=0
 
-# Specify the maximum number of sounds to play simultaneously
-# Note: lower the number of sounds to lessen CPU load
-concurrentSounds=2
+# Concrete mixer has the concept of streams - directories of sound files of a
+# particular kind. Having multiple streams allows a more even mix, for example
+# one stream could play background ambient sounds while another stream might
+# contain musical sounds. If these sounds were all in a single stream you might # have multiple musical sounds clashing with each other, or multiple background # sounds providing little aural focus. Separating kinds of sounds into their own# streams ensures the mix is more even.
+#
+# You can define as many streams as you like, or just one. The convention for
+# a stream setting is stream<number>Path. There is no limit to the number of
+# streams save for CPU and sense.
+stream1Path=/home/pi/audio/stream1
+stream2Path=/home/pi/audio/stream2
 
-# Path to audio files for 'main' sounds, eg audiomainpath=/home/pi/mainsounds
-audioMainPath=/home/pi/audio/main
-
-# If you have sounds you want to play against 'main' sounds rather than
-# themselves, you can specify a directoy path here
-audioAltPath=/home/pi/audio/alt
+# stream<number>ConcurrentSounds directives specify how many files from the
+# specified stream should play concurrently. The default is 1.
+# stream1ConcurrentSounds=1
+# stream2ConcurrentSouds=1
 
 # FX settings. 1 for enabled, 0 for disabled
 fxChainEnabled=1

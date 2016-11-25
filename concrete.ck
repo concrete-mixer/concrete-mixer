@@ -26,8 +26,7 @@ me.dir() + "lib/" => string lib_path;
 Machine.add(lib_path + "Config.ck");
 Machine.add(lib_path + "Time.ck");
 Machine.add(lib_path + "Mixer.ck");
-Machine.add(lib_path + "SoundFiles.ck");
-// (Dispatch also infrastructural; added last)
+// (Dispatch.ck also infrastructural; added last)
 
 // Utility classes
 Machine.add(lib_path + "Utilities/Chooser.ck");

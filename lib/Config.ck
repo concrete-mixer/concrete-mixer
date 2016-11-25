@@ -20,15 +20,33 @@
     U.S.A.
 -----------------------------------------------------------------------------*/
 
-// The following is a whack way of supporting static strings, see:
-// https://lists.cs.princeton.edu/pipermail/chuck-users/2006-September/001107.html
-class FilePath {
-    string path;
+// This class defines stream data for playing lists of files
+// from different directories
+class StreamData {
+    string streamsAvailable[0];
+    string filePaths[0];
+    string files[0][0];
+    int concurrentSounds[0];
+
+    fun void setStream(string stream) {
+        streamsAvailable << stream;
+    }
+
+    fun void setFilePath(string stream, string path) {
+        path => filePaths[stream];
+    }
+
+    fun void setFiles(string stream, string audioFiles[]) {
+        audioFiles @=> files[stream];
+    }
+
+    fun void setConcurrentSounds(string stream, int num) {
+        num => concurrentSounds[stream];
+    }
 }
 
 public class Config {
-    static FilePath @ audioAltPath;
-    static FilePath @ audioMainPath;
+    static StreamData @ streamData;
     static float bpm;
     static int bufsize;
     static int concurrentSounds;
@@ -49,10 +67,7 @@ class ConfigSet {
 
     // initialise values with defaults
     fun void _setDefaultValues() {
-        new FilePath @=> Config.audioAltPath;
-        "" => Config.audioAltPath.path;
-        new FilePath @=> Config.audioMainPath;
-        "" => Config.audioMainPath.path;
+        new StreamData @=> Config.streamData;
         90 => Config.bpm;
         2048 => Config.bufsize;
         2 => Config.concurrentSounds;
@@ -77,9 +92,7 @@ class ConfigSet {
                 RegEx.match("^(.*)=(.*)$", line, matches);
 
                 if ( matches.cap() ) {
-                    for( 0 => int i; i < matches.cap(); i++ ) {
-                        _setValue(matches[1], matches[2]);
-                    }
+                    _setValue(matches[1], matches[2]);
                 }
             }
         }
@@ -90,75 +103,95 @@ class ConfigSet {
     fun void _setValue(string key, string stringValue) {
         int intValue;
 
+        // ChucK doesn't support switches...
         // format value correctly
-        if ( key != "audioMainPath" && key != "audioAltPath" ) {
-            if ( key == "bpm" ) {
-                Std.atof(stringValue) => Config.bpm;
-            }
-            else {
-                Std.atoi(stringValue) => intValue;
-            }
+        if ( key == "bpm" ) {
+            Std.atof(stringValue) => Config.bpm;
+            return;
+        }
+        else {
+            Std.atoi(stringValue) => intValue;
         }
 
         // now determine key to set and set
         // first, the ints
         if ( key == "srate" ) {
             intValue => Config.srate;
+            return;
         }
 
         if ( key == "record" ) {
             intValue => Config.record;
+            return;
         }
 
         if ( key == "rpi" ) {
             intValue => Config.rpi;
+            return;
         }
 
         if ( key == "fxChainEnabled" ) {
             intValue => Config.fxChainEnabled;
-        }
-
-        if ( key == "concurrentSounds" ) {
-            intValue => Config.concurrentSounds;
+            return;
         }
 
         if ( key == "endlessPlay" ) {
             intValue => Config.endlessPlay;
+            return;
         }
 
         // finally, audio path strings
-        if ( key == "audioMainPath" ) {
-            new FilePath @=> Config.audioMainPath;
-            stringValue @=> Config.audioMainPath.path;
+        string matches[0];
+
+        RegEx.match("^stream([0-9]+)Path", key, matches);
+
+        if ( matches.size() ) {
+            matches[1] => string stream;
+            stream => Config.streamData.setStream;
+            Config.streamData.setFilePath(stream, stringValue);
+            Config.streamData.setFiles(stream, _setFiles(stringValue));
+            return;
         }
 
-        if ( key == "audioAltPath" ) {
-            new FilePath @=> Config.audioAltPath;
-            stringValue @=> Config.audioAltPath.path;
+        // stilll here? it could only mean...
+
+        // reset matches
+        0 => matches.size;
+
+        RegEx.match("^stream([0-9]+)ConcurrentSounds", key, matches);
+
+        if ( matches.size() ) {
+            matches[1] => string stream;
+            Std.atoi(stringValue) => intValue;
+            Config.streamData.setConcurrentSounds(stream, intValue);
         }
     }
 
-    fun void printVars() {
-        1 => int i;
+    fun string[] _setFiles(string path) {
+        FileIO fileList;
 
-        <<< i++, Config.audioAltPath.path >>>;
-        <<< i++, Config.audioMainPath.path >>>;
-        <<< i++, Config.bpm >>>;
-        <<< i++, Config.bufsize >>>;
-        <<< i++, Config.concurrentSounds >>>;
-        <<< i++, Config.endlessPlay >>>;
-        <<< i++, Config.fxChainEnabled >>>;
-        <<< i++, Config.record >>>;
-        <<< i++, Config.rpi >>>;
-        <<< i++, Config.srate >>>;
+        fileList.open(path);
+
+        _processFileList( fileList.dirList(), path ) @=> string files[];
+
+        fileList.close();
+
+        return files;
+    }
+
+    fun string[] _processFileList( string fileList[], string path ) {
+        string wavsFound[0];
+
+        for ( 0 => int i; i < fileList.cap(); i++ ) {
+            if ( RegEx.match(".wav$", fileList[i]) ) {
+                wavsFound << fileList[i];
+            }
+        }
+
+        return wavsFound;
     }
 }
 
 ConfigSet setup;
 
 setup.initialise();
-
-// setup.printVars();
-//
-// setup.printFileList("main");
-// setup.printFileList("alt");
