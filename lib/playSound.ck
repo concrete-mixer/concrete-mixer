@@ -24,9 +24,6 @@
 Fader f;
 Panner p;
 
-// set up UGens;
-SndBuf buf;
-
 Chooser c;
 AlterSignal as;
 
@@ -36,11 +33,13 @@ me.arg(1) => string stream;
 chout <= "Playing stream" <= stream <= filepath <= IO.nl();
 
 // set up buf
-512 => buf.chunks;
+SndBuf buf;
+Config.sndBufChunks => int chunks;
+chunks => buf.chunks;
 filepath => buf.read;
 
 
-// set up buf2 (may not be used if file is not stereo)
+// set up buf2 (may not be used if file is not two channel)
 SndBuf buf2;
 
 if ( buf.channels() == 1 ) {
@@ -57,7 +56,7 @@ if ( buf.channels() == 1 ) {
     as.initialise( filepath, p, f, buf );
 }
 else {
-    512 => buf2.chunks;
+    chunks => buf2.chunks;
     filepath => buf2.read;
     1 => buf2.channel;
 

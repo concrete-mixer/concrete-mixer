@@ -57,6 +57,7 @@ public class Config {
     static int srate;
     static int ended;
     static int fxUsed[];
+    static int sndBufChunks;
 }
 
 class ConfigSet {
@@ -76,6 +77,7 @@ class ConfigSet {
         0 => Config.record;
         0 => Config.rpi;
         44100 => Config.srate;
+        512 => Config.sndBufChunks;
     }
 
     fun void _setValuesFromConfig() {
@@ -137,6 +139,11 @@ class ConfigSet {
 
         if ( key == "endlessPlay" ) {
             intValue => Config.endlessPlay;
+            return;
+        }
+
+        if ( key == "sndBufChunks" ) {
+            intValue => Config.sndBufChunks;
             return;
         }
 
