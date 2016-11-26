@@ -37,12 +37,17 @@ ENDLESS_PLAY=`awk 'match($0, /^endlessPlay=(1|0)$/) { print substr($0, 13, 1) }'
 BUFSIZE=`awk 'match($0, /^bufsize=[0-9]+$/) { print substr($0, 9) }' ./concrete.conf`
 SRATE=`awk 'match($0, /^srate=[0-9]+$/) { print substr($0, 7) }' ./concrete.conf`
 
-echo $CHUCK_PATH $CHUGIN_PATH $BUFSIZE $SRATE
-
 if [[ ! -x $CHUCK_PATH || ! -x $CHUGIN_PATH ]]
 then
-    echo Chuck path or chugin path not available
-    exit
+    # no custom chuck paths; default to linux ChucK build install paths
+    CHUCK_PATH=/usr/local/bin/chuck
+    CHUGIN_PATH=/usr/local/lib/chuck
+
+    if [[ ! -x $CHUCK_PATH || ! -x $CHUGIN_PATH ]]
+    then
+        echo Chuck path or chugin path not available
+        exit
+    fi
 fi
 
 if [[ "$ENDLESS_PLAY" == 1 ]]

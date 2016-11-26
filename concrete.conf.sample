@@ -20,11 +20,11 @@
 
 # Path to chuck binary. Defaults to ChucK standard linux install path
 # Change to specify a different path
-chuckPath=/usr/local/bin/chuck
+# chuckPath=/usr/local/bin/chuck
 
 # Path to chuck chugin plugins. Default is chugin standard linux install path.
 # Uncomment and change to specify a different path
-chuginPath=/usr/local/lib/chuck
+# chuginPath=/usr/local/lib/chuck
 
 # bpm (beats per minute)
 # Most of the system's timed parameters (eg delay times or slow oscillator
