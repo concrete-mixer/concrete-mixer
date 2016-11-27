@@ -29,8 +29,9 @@ AlterSignal as;
 
 me.arg(0) => string filepath;
 me.arg(1) => string stream;
+Std.atoi(me.arg(2)) => int playId;
 
-chout <= "Playing stream" <= stream <= filepath <= IO.nl();
+chout <= "Playing stream" <= stream <= filepath <= "playId" <= playId <= IO.nl();
 
 // set up buf
 SndBuf buf;
@@ -98,7 +99,7 @@ p.pan.left =< Mixer.leftOut;
 p.pan.right =< Mixer.rightOut;
 
 Time.barDur * 2 => now;
-Mixer.oscOut.start("/playsound").add(stream).send();
+Mixer.oscOut.start("/playsound").add(stream).add(playId).send();
 
 // End of execution
 

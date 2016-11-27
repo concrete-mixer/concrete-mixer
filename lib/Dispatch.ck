@@ -25,7 +25,7 @@ class Dispatch {
     0 => int fxMachineId;
     0 => int ending;
 
-    int streamsActive[0];
+    int playIds[0];
     Fader f;
 
     26 => int fxChainsCount;
@@ -53,8 +53,14 @@ class Dispatch {
 
             for ( 0 => int j; j < concurrentSounds; j++ ) {
                 if ( Config.streamData.files[stream].size() ) {
-                    playSound(stream);
-                    1 => streamsActive[stream];
+                    // assign playIds as we populate the array
+                    // 1 in the assignment means stream is live
+                    playIds << 1;
+
+                    // the array key from the last assignment is the playId
+                    playIds.size() - 1 => int playId;
+
+                    playSound(stream, playId);
                 }
                 else {
                     <<< "No files available for stream", stream, "exiting" >>>;
@@ -87,11 +93,12 @@ class Dispatch {
             while(oin.recv(msg)) {
                 // stream is always the first arg if there are args
                 msg.getString(0) => string stream;
+                msg.getInt(1) => int playId;
 
                 chout <= "Received " <= msg.address <= IO.nl();
 
                 if ( msg.address == "/playsound" ) {
-                    playSound(stream);
+                    playSound(stream, playId);
                 }
 
                 if ( msg.address == "/playfxchain" ) {
@@ -148,16 +155,18 @@ class Dispatch {
         newArray @=> Config.streamData.files[stream];
     }
 
-    fun void playSound( string stream ) {
+    fun void playSound( string stream, int playId ) {
+        <<< "playId", playId >>>;
         getFileToPlay(stream) => string filePath;
 
         if ( filePath != "" ) {
-            me.dir() + "playSound.ck:" + filePath + ":" + stream => string args;
+            me.dir() + "playSound.ck:" + filePath + ":" + stream + ":" + playId=> string args;
 
             Machine.add(args);
+            1 => playIds[playId];
         }
         else {
-            0 => streamsActive[stream];
+            0 => playIds[playId];
 
             if ( lastStream() ) {
                 endActivity();
@@ -169,8 +178,8 @@ class Dispatch {
         1 => int streamIsLast;
 
         // Determine if any streams are still active
-        for ( int i; i < streamsActive.size(); i++ ) {
-            if ( streamsActive[i] ) {
+        for ( int i; i < playIds.size(); i++ ) {
+            if ( playIds[i] ) {
                 // there is another stream still active
                 // so return false
                 0 => streamIsLast;
