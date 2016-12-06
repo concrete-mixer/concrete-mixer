@@ -25,7 +25,9 @@ class Dispatch {
     0 => int fxMachineId;
     0 => int ending;
 
-    int playIds[0];
+    Config.concurrentSounds => int concurrentSounds;
+
+    int playIds[concurrentSounds];
     Fader f;
 
     26 => int fxChainsCount;
@@ -41,33 +43,37 @@ class Dispatch {
     fun void initialise() {
         0 => int altSent;
 
-        for ( 0 => int i; i < Config.streamData.streamsAvailable.size(); i++ ) {
-            Config.streamData.streamsAvailable[i] => string stream;
+        string files[0];
 
-            // set concurrent sounds for each stream to 1 by default
-            1 => int concurrentSounds;
+        Config.streamData.setFiles("1", files);
 
-            if ( Config.streamData.concurrentSounds[stream] ) {
-                Config.streamData.concurrentSounds[stream] => concurrentSounds;
-            }
+        // for ( 0 => int i; i < Config.streamData.streamsAvailable.size(); i++ ) {
+        //     Config.streamData.streamsAvailable[i] => string stream;
 
-            for ( 0 => int j; j < concurrentSounds; j++ ) {
-                if ( Config.streamData.files[stream].size() ) {
-                    // assign playIds as we populate the array
-                    // 1 in the assignment means stream is live
-                    playIds << 1;
+        //     // set concurrent sounds for each stream to 1 by default
+        //     1 => int concurrentSounds;
 
-                    // the array key from the last assignment is the playId
-                    playIds.size() - 1 => int playId;
+        //     if ( Config.streamData.concurrentSounds[stream] ) {
+        //         Config.streamData.concurrentSounds[stream] => concurrentSounds;
+        //     }
 
-                    playSound(stream, playId);
-                }
-                else {
-                    <<< "No files available for stream", stream, "exiting" >>>;
-                    me.exit();
-                }
-            }
-        }
+        //     for ( 0 => int j; j < concurrentSounds; j++ ) {
+        //         if ( Config.streamData.files[stream].size() ) {
+        //             // assign playIds as we populate the array
+        //             // 1 in the assignment means stream is live
+        //             playIds << 1;
+
+        //             // the array key from the last assignment is the playId
+        //             playIds.size() - 1 => int playId;
+
+        //             playSound(stream, playId);
+        //         }
+        //         else {
+        //             <<< "No files available for stream", stream, "exiting" >>>;
+        //             me.exit();
+        //         }
+        //     }
+        // }
 
         if ( Config.fxChainEnabled ) {
             getFxChain() => int fxChain;
@@ -82,8 +88,11 @@ class Dispatch {
 
         "/playsound" => oin.addAddress;
         "/playfxchain" => oin.addAddress;
+        "/notifyfile" => oin.addAddress;
 
         OscMsg msg;
+
+        spork ~ dispatchPlaySounds();
 
         // start listening for packets notifying server that playback
         // for each playFx and playSound has finished
@@ -92,12 +101,12 @@ class Dispatch {
 
             while(oin.recv(msg)) {
                 // stream is always the first arg if there are args
-                msg.getString(0) => string stream;
-                msg.getInt(1) => int playId;
 
                 chout <= "Received " <= msg.address <= IO.nl();
 
                 if ( msg.address == "/playsound" ) {
+                    msg.getString(0) => string stream;
+                    msg.getInt(1) => int playId;
                     playSound(stream, playId);
                 }
 
@@ -108,6 +117,12 @@ class Dispatch {
                     // when file playback is complete.
 
                     Machine.add(me.dir() + "playFxChain.ck:" + fxChain) => fxMachineId;
+                }
+
+                if ( msg.address == "/notifyfile" ) {
+                    msg.getString(0) => string stream;
+                    msg.getString(1) => string filepath;
+                    Config.streamData.setFile(stream, filepath);
                 }
             }
         }
@@ -132,7 +147,25 @@ class Dispatch {
 
         removeFile(key, stream);
 
-        return Config.streamData.filePaths[stream] + "/" + file;
+        return file;
+    }
+
+    fun void dispatchPlaySounds() {
+        0 => int playIdsPlaying;
+
+        while ( playIdsPlaying != concurrentSounds ) {
+            for ( int i; i < concurrentSounds; i++ ) {
+                if ( playIds[i] == 0 && Config.streamData.files["1"].size() ) {
+                    <<< "fire it up", i >>>;
+                    playSound("1", i);
+                    playIdsPlaying++;
+                }
+            }
+
+            Time.barDur => now;
+        }
+
+        <<< "PEACE OUT" >>>;
     }
 
     fun void removeFile(int key, string stream) {
@@ -156,7 +189,6 @@ class Dispatch {
     }
 
     fun void playSound( string stream, int playId ) {
-        <<< "playId", playId >>>;
         getFileToPlay(stream) => string filePath;
 
         if ( filePath != "" ) {
@@ -179,7 +211,7 @@ class Dispatch {
 
         // Determine if any streams are still active
         for ( int i; i < playIds.size(); i++ ) {
-            if ( playIds[i] ) {
+            if ( playIds[Std.itoa(i)] ) {
                 // there is another stream still active
                 // so return false
                 0 => streamIsLast;

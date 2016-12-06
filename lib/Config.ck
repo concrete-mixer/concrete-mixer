@@ -26,6 +26,9 @@ class StreamData {
     string streamsAvailable[0];
     string filePaths[0];
     string files[0][0];
+    string things[];
+    things @=> files["1"];
+
     int concurrentSounds[0];
 
     fun void setStream(string stream) {
@@ -38,6 +41,15 @@ class StreamData {
 
     fun void setFiles(string stream, string audioFiles[]) {
         audioFiles @=> files[stream];
+    }
+
+    fun void setFile(string stream, string file) {
+        if ( ! files[stream].size() ) {
+            string audioFiles[0];
+            audioFiles @=> files[stream];
+        }
+
+        files[stream] << file;
     }
 
     fun void setConcurrentSounds(string stream, int num) {
@@ -150,28 +162,28 @@ class ConfigSet {
         // finally, audio path strings
         string matches[0];
 
-        RegEx.match("^stream([0-9]+)Path", key, matches);
+        // RegEx.match("^stream([0-9]+)Path", key, matches);
 
-        if ( matches.size() ) {
-            matches[1] => string stream;
-            stream => Config.streamData.setStream;
-            Config.streamData.setFilePath(stream, stringValue);
-            Config.streamData.setFiles(stream, _setFiles(stringValue));
-            return;
-        }
+        // if ( matches.size() ) {
+        //     matches[1] => string stream;
+        //     stream => Config.streamData.setStream;
+        //     Config.streamData.setFilePath(stream, stringValue);
+        //     Config.streamData.setFiles(stream, _setFiles(stringValue));
+        //     return;
+        // }
 
-        // stilll here? it could only mean...
+        // // stilll here? it could only mean...
 
-        // reset matches
-        0 => matches.size;
+        // // reset matches
+        // 0 => matches.size;
 
-        RegEx.match("^stream([0-9]+)ConcurrentSounds", key, matches);
+        // RegEx.match("^stream([0-9]+)ConcurrentSounds", key, matches);
 
-        if ( matches.size() ) {
-            matches[1] => string stream;
-            Std.atoi(stringValue) => intValue;
-            Config.streamData.setConcurrentSounds(stream, intValue);
-        }
+        // if ( matches.size() ) {
+        //     matches[1] => string stream;
+        //     Std.atoi(stringValue) => intValue;
+        //     Config.streamData.setConcurrentSounds(stream, intValue);
+        // }
     }
 
     fun string[] _setFiles(string path) {
@@ -187,15 +199,15 @@ class ConfigSet {
     }
 
     fun string[] _processFileList( string fileList[], string path ) {
-        string wavsFound[0];
+        string soundsFound[0];
 
         for ( 0 => int i; i < fileList.cap(); i++ ) {
-            if ( RegEx.match(".wav$", fileList[i]) ) {
-                wavsFound << fileList[i];
+            if ( RegEx.match(".(wav|aif|aiff)$", fileList[i]) ) {
+                soundsFound << fileList[i];
             }
         }
 
-        return wavsFound;
+        return soundsFound;
     }
 }
 

@@ -50,6 +50,8 @@ then
     fi
 fi
 
+source venv/bin/activate && python soundcloud-test.py &
+
 if [[ "$ENDLESS_PLAY" == 1 ]]
 then
     # All going well, this will run eternally

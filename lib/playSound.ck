@@ -20,7 +20,6 @@
     U.S.A.
 -----------------------------------------------------------------------------*/
 
-
 Fader f;
 Panner p;
 
@@ -38,7 +37,6 @@ SndBuf buf;
 Config.sndBufChunks => int chunks;
 chunks => buf.chunks;
 filepath => buf.read;
-
 
 // set up buf2 (may not be used if file is not two channel)
 SndBuf buf2;
@@ -79,6 +77,10 @@ else {
 
 0 => buf.gain;
 
+fadeTime => now;
+
+1 => buf.pos;
+
 if ( buf.channels() == 1 ) {
     playbackSingleChannel();
 }
@@ -98,21 +100,21 @@ else {
 p.pan.left =< Mixer.leftOut;
 p.pan.right =< Mixer.rightOut;
 
-Time.barDur * 2 => now;
 Mixer.oscOut.start("/playsound").add(stream).add(playId).send();
 
 // End of execution
 
 fun void playbackSingleChannel() {
-    f.fadeInBlocking( fadeTime, 0.8, buf );
+    f.fadeInBlocking( fadeTime, 1.0, buf );
     activity();
     f.fadeOutBlocking( fadeTime, buf );
 }
 
 fun void playbackDoubleChannel() {
+    1 => buf2.pos;
     0 => buf2.gain;
-    f.fadeIn( fadeTime, 0.8, buf );
-    f.fadeIn( fadeTime, 0.8, buf2 );
+    f.fadeIn( fadeTime, 1.0, buf );
+    f.fadeIn( fadeTime, 1.0, buf2 );
     buf.length() - fadeTime => now;
     f.fadeOut( fadeTime, buf );
     f.fadeOut( fadeTime, buf2 );
