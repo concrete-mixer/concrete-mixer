@@ -30,7 +30,7 @@ The following procedure will get you up and running with Concrete Mixer utilisin
 
 2. Install ChucK prerequisites:
 
-    `sudo apt update && sudo apt --assume-yes install git libsndfile1-dev bison flex libasound2-dev flac ffmpeg libavcodec-extra-53`
+    `sudo apt update && sudo apt --assume-yes install git libsndfile1-dev bison flex libasound2-dev flac ffmpeg libavcodec-extra-53 python-pip virtualenv`
 
 3. Clone ChucK from github repo, compile and install:
 
