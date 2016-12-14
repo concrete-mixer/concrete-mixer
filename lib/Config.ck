@@ -27,12 +27,14 @@ class StreamData {
     string filePaths[0];
     string files[0][0];
     string things[];
-    things @=> files["1"];
+    string mode;
 
     int concurrentSounds[0];
 
     fun void setStream(string stream) {
         streamsAvailable << stream;
+        string audioFiles[0];
+        audioFiles @=> files[stream];
     }
 
     fun void setFilePath(string stream, string path) {
@@ -54,6 +56,10 @@ class StreamData {
 
     fun void setConcurrentSounds(string stream, int num) {
         num => concurrentSounds[stream];
+    }
+
+    fun void setMode(string modeIn) {
+        modeIn => mode;
     }
 }
 
@@ -81,6 +87,7 @@ class ConfigSet {
     // initialise values with defaults
     fun void _setDefaultValues() {
         new StreamData @=> Config.streamData;
+        "soundcloud" => Config.streamData.setMode;
         90 => Config.bpm;
         2048 => Config.bufsize;
         2 => Config.concurrentSounds;
@@ -117,14 +124,18 @@ class ConfigSet {
     fun void _setValue(string key, string stringValue) {
         int intValue;
 
-        // ChucK doesn't support switches...
-        // format value correctly
+        // Format value correctly
+        // it would be nice if ChucK had switch statements
         if ( key == "bpm" ) {
             Std.atof(stringValue) => Config.bpm;
             return;
         }
         else {
             Std.atoi(stringValue) => intValue;
+        }
+
+        if ( key == "mode" ) {
+            stringValue => Config.streamData.setMode;
         }
 
         // now determine key to set and set
@@ -159,31 +170,43 @@ class ConfigSet {
             return;
         }
 
-        // finally, audio path strings
+        // finally, audio sources
+
+        // we default to soundcloud
         string matches[0];
 
-        // RegEx.match("^stream([0-9]+)Path", key, matches);
+        RegEx.match("^stream([0-9]+)Url", key, matches);
 
-        // if ( matches.size() ) {
-        //     matches[1] => string stream;
-        //     stream => Config.streamData.setStream;
-        //     Config.streamData.setFilePath(stream, stringValue);
-        //     Config.streamData.setFiles(stream, _setFiles(stringValue));
-        //     return;
-        // }
+        if ( matches.size() ) {
+            matches[1] => string stream;
+            stream => Config.streamData.setStream;
+            return;
+        }
 
-        // // stilll here? it could only mean...
+        // if not soundcloud, then we get audio from local directories...
+        // reset matches
+        0 => matches.size;
 
-        // // reset matches
-        // 0 => matches.size;
+        RegEx.match("^stream([0-9]+)Path", key, matches);
 
-        // RegEx.match("^stream([0-9]+)ConcurrentSounds", key, matches);
+        if ( matches.size() ) {
+            matches[1] => string stream;
+            stream => Config.streamData.setStream;
+            Config.streamData.setFilePath(stream, stringValue);
+            Config.streamData.setFiles(stream, _setFiles(stringValue));
+            return;
+        }
 
-        // if ( matches.size() ) {
-        //     matches[1] => string stream;
-        //     Std.atoi(stringValue) => intValue;
-        //     Config.streamData.setConcurrentSounds(stream, intValue);
-        // }
+        // get concurrentsounds value for each stream
+        0 => matches.size;
+
+        RegEx.match("^stream([0-9]+)ConcurrentSounds", key, matches);
+
+        if ( matches.size() ) {
+            matches[1] => string stream;
+            Std.atoi(stringValue) => intValue;
+            Config.streamData.setConcurrentSounds(stream, intValue);
+        }
     }
 
     fun string[] _setFiles(string path) {

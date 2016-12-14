@@ -44,6 +44,9 @@ bufsize=2048
 sndBufChunks=2048
 
 # Chuck samplerate parameter
+# If you're having problems with performance you can adjust to 32000 without
+# much loss in highend frequency (check your sound card supports this rate)
+# Note you may wish to adjust your sound files' sample rates to match srate
 srate=44100
 
 # record each iteration of Concrete Mixer to a wav file

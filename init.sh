@@ -36,6 +36,7 @@ CHUGIN_PATH=`awk 'match($0, /^chuginPath=.*$/) { print substr($0, 12) }' ./concr
 ENDLESS_PLAY=`awk 'match($0, /^endlessPlay=(1|0)$/) { print substr($0, 13, 1) }' ./concrete.conf`
 BUFSIZE=`awk 'match($0, /^bufsize=[0-9]+$/) { print substr($0, 9) }' ./concrete.conf`
 SRATE=`awk 'match($0, /^srate=[0-9]+$/) { print substr($0, 7) }' ./concrete.conf`
+MODE=`awk 'match($0, /^mode=.+$/) { print substr($0, 6) }' ./concrete.conf`
 
 if [[ ! -x $CHUCK_PATH || ! -x $CHUGIN_PATH ]]
 then
@@ -50,7 +51,11 @@ then
     fi
 fi
 
-source venv/bin/activate && python soundcloud-test.py &
+
+if [[ $MODE == 'soundcloud' ]]
+then
+    source venv/bin/activate && python soundcloud-fetch.py &
+fi
 
 if [[ "$ENDLESS_PLAY" == 1 ]]
 then

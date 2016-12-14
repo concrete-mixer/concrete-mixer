@@ -44,23 +44,29 @@ The following procedure will get you up and running with Concrete Mixer utilisin
 
     `cd chugins && make linux-alsa && sudo make install && cd -`
 
-5. Download the audio files:
+5. Pythonate:
+
+    `virtualenv venv`
+
+    `pip install -r requirements`
+
+6. Download the audio files:
 
     `wget https://www.dropbox.com/s/dvk4aoztqhzwkhc/concrete-mixer-files.zip && unzip concrete-mixer-files.zip`
 
-6. Unpack the audio files:
+7. Unpack the audio files:
 
     `cd audio/main && flac -d *.flac --delete-input-file && cd -`
 
     `cd audio/alt && flac -d *.flac --delete-input-file && cd -`
 
-7. Install Concrete Mixer:
+8. Install Concrete Mixer:
 
     `git clone https://github.com/concrete-mixer/concrete-mixer`
 
     `cd concrete-mixer && cp concrete.conf.sample concrete.conf`
 
-8. Finally, run Concrète Mixer:
+9. Finally, run Concrète Mixer:
 
     `./init.sh`
 
