@@ -226,7 +226,7 @@ class ConfigSet {
 
         for ( 0 => int i; i < fileList.cap(); i++ ) {
             if ( RegEx.match(".(wav|aif|aiff)$", fileList[i]) ) {
-                soundsFound << fileList[i];
+                soundsFound << path + "/" + fileList[i];
             }
         }
 
