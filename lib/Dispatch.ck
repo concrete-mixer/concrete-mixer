@@ -39,40 +39,6 @@ class Dispatch {
     Chooser c;
 
     fun void initialise() {
-        for ( 0 => int i; i < Config.streamData.streamsAvailable.size(); i++ ) {
-            Config.streamData.streamsAvailable[i] => string stream;
-
-            getConcurrentSounds(stream) => int concurrentSounds;
-
-            // set playIds
-            for ( 0 => int j; j < concurrentSounds; j++ ) {
-                int val;
-
-                if ( Config.streamData.mode == "local" ) {
-                    // 1 in the assignment means stream is live
-                    // we can kick off playback
-                    1 => val;
-                }
-
-                playIds << val;
-
-                if ( Config.streamData.mode == "local" ) {
-                    // initiate playSound...
-
-                    // ... if we have files
-                    if ( Config.streamData.files[stream].size() ) {
-                        // the array key from the last assignment is the playId
-                        playIds.size() - 1 => int playId;
-
-                        playSound(stream, playId);
-                    }
-                    else {
-                        me.exit();
-                    }
-                }
-            }
-        }
-
         if ( Config.streamData.mode == "local" ) {
             initLocal();
         }
