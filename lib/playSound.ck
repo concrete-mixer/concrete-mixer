@@ -42,6 +42,8 @@ filepath => buf.read;
 // set up buf2 (may not be used if file is not two channel)
 SndBuf buf2;
 
+0 => buf.gain => buf2.gain;
+
 if ( buf.channels() == 1 ) {
     buf => p.pan;
 
@@ -76,7 +78,6 @@ else {
 
 2 * Time.barDur => dur fadeTime;
 
-0 => buf.gain;
 
 fadeTime => now;
 
