@@ -31,7 +31,7 @@ me.arg(1) => string stream;
 
 Std.atoi(me.arg(2)) => int playId;
 
-chout <= "Playing stream" <= stream <= "filepath" <= filepath <= "playId" <= playId <= IO.nl();
+<<< "Playing stream", stream ,  "filepath" ,  filepath ,  "playId" ,  playId >>>;
 
 // set up buf
 SndBuf buf;
