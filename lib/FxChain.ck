@@ -19,7 +19,7 @@ public class FxChain {
     // Fx chain is mono, let's make a little cheap stereo
     // via a short delay on one of the channels
     Delay delay;
-    chooser.getDur( 0.001, 0.020 ) => delay.delay;
+    chooser.getDur( 0.01, 0.04 ) => delay.delay;
 
     // should left side be delayed or right?
     if ( chooser.getInt( 0, 1 ) ) {
