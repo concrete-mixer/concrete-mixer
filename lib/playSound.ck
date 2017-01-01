@@ -43,6 +43,7 @@ filepath => buf.read;
 SndBuf buf2;
 
 0 => buf.gain => buf2.gain;
+2 * Time.barDur => dur fadeTime;
 
 if ( buf.channels() == 1 ) {
     buf => p.pan;
@@ -55,10 +56,17 @@ if ( buf.channels() == 1 ) {
     buf => Mixer.fxIn;
     c.getFloat( -1.0, 1.0 ) => p.pan.pan;
 
+    // Spend two bars loading buffer
+    // Hopefully that's sufficient....
+    fadeTime => now;
     as.initialise( filepath, p, f, buf );
 }
 else {
     chunks => buf2.chunks;
+
+    // Provide time for buf1 to read before
+    // reading buf2
+    Time.barDur => now;
     filepath => buf2.read;
     1 => buf2.channel;
 
@@ -72,14 +80,15 @@ else {
         buf => Mixer.rightOut;
     }
 
+    // balance up time with mono samples to be consistent
+    Time.barDur => now;
+
     buf => Mixer.fxIn;
     buf2 => Mixer.fxIn;
 }
 
-2 * Time.barDur => dur fadeTime;
 
 
-fadeTime => now;
 
 1 => buf.pos;
 

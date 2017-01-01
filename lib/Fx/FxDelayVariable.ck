@@ -36,15 +36,23 @@ public class FxDelayVariable extends Fx {
 
     fun void initialise() {
         1 => active;
-        501::ms => delay.max;
+
+        // set max based on largest value in Time.bpmIntervalsShort
+        getMax() => delay.max;
 
         spork ~ activity();
+    }
+
+    // set delay.max based on largest value in Time.bpmIntervalsShort
+    fun dur getMax() {
+        Time.bpmIntervalsShort.size() - 1 => int max;
+        return Time.bpmIntervalsShort[max]::second;
     }
 
     fun void activity() {
         while ( active ) {
             // set duration for delay
-            chooser.getDur( 0.05, 0.50 ) => dur duration;
+            getNextDur() => dur duration;
 
             duration => delay.delay;
             duration - 400::samp => dur mainDuration;
@@ -67,6 +75,21 @@ public class FxDelayVariable extends Fx {
             // fade out
             fader.fadeOut( 200::samp, output );
             200::samp => now;
+        }
+    }
+
+    fun dur getNextDur() {
+        Time.bpmIntervalsShort.size() - 1 => int size;
+
+        chooser.getInt(0, size) => int choice;
+
+        Time.bpmIntervalsShort[choice] => float interval;
+
+        if ( interval::second == delay.delay() ) {
+            return getNextDur();
+        }
+        else {
+            return interval::second;
         }
     }
 }
