@@ -52,8 +52,6 @@ def download_stream_files(stream_data):
 
     sc_client = soundcloud.Client(client_id=client_id)
 
-    pprint.pprint(stream)
-
     url = stream_data['url']
 
     result = sc_client.get('/resolve',
@@ -68,7 +66,6 @@ def download_stream_files(stream_data):
                 and track['original_format'] == 'flac':
                     ids.append(track['id'])
     else:
-        print('hyahaa')
         sys.exit('Could not download stream files: ' + stream_data['url'])
 
     random.shuffle(ids)

@@ -165,33 +165,26 @@ class Dispatch {
         // stream and initiate playback, which should be self-sustaining for
         // each concurrent item for the stream (until we run out of files,
         // at least)
-        0 => int allPlayIdsInUse;
-
-        while ( ! allPlayIdsInUse ) {
+        while ( 1 ) {
+            int totalConcurrentSounds;
             0 => int playId;
-            0 => int playIdsInUseCount;
+            Config.streamData.streamsAvailable.size() => int size;
 
-            for ( 0 => int i; i < Config.streamData.streamsAvailable.size(); i++ ) {
+            for ( 0 => int i; i < size; i++ ) {
                 Config.streamData.streamsAvailable[i] => string stream;
 
                 getConcurrentSounds(stream) => int concurrentSounds;
+                concurrentSounds +=> totalConcurrentSounds;
 
                 for ( int j; j < concurrentSounds; j++ ) {
-                    playId++;
-
-                    if ( playIds[j] == 0 ) {
-                        if ( Config.streamData.files[stream].size() ) {
-                            <<< "fire it up", stream, playId >>>;
-                            playSound(stream, playId);
-                        }
-                    }
-                    else {
-                        playIdsInUseCount++;
+                    if ( Config.streamData.files[stream].size() ) {
+                        playIds << 1;
+                        playSound(stream, playIds.size() - 1);
                     }
                 }
             }
 
-            if ( playIdsInUseCount == playIds.size() ) {
+            if ( totalConcurrentSounds == playIds.size() ) {
                 // our work here is done...?
                 <<< "PEACE OUT" >>>;
                 return;
@@ -202,7 +195,7 @@ class Dispatch {
     }
 
     fun void removeFile(int key, string stream) {
-        // because ChucK is fucking primitive, we can't remove items from
+        // because ChucK is rather primitive, we can't remove items from
         // an array - we have to reconstruct it
         string target[];
         string file, filePath;
@@ -244,7 +237,7 @@ class Dispatch {
 
         // Determine if any streams are still active
         for ( int i; i < playIds.size(); i++ ) {
-            if ( playIds[Std.itoa(i)] ) {
+            if ( playIds[i] ) {
                 // there is another stream still active
                 // so return false
                 0 => streamIsLast;
