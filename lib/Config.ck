@@ -65,6 +65,7 @@ class StreamData {
 
 public class Config {
     static StreamData @ streamData;
+    static int debug;
     static float bpm;
     static int bufsize;
     static int concurrentSounds;
@@ -88,6 +89,7 @@ class ConfigSet {
     fun void _setDefaultValues() {
         new StreamData @=> Config.streamData;
         "soundcloud" => Config.streamData.setMode;
+        0 => Config.debug;
         90 => Config.bpm;
         2048 => Config.bufsize;
         2 => Config.concurrentSounds;
@@ -136,6 +138,10 @@ class ConfigSet {
 
         if ( key == "mode" ) {
             stringValue => Config.streamData.setMode;
+        }
+
+        if ( key == "debug" ) {
+            intValue => Config.debug;
         }
 
         // now determine key to set and set

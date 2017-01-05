@@ -28,7 +28,7 @@ public class FxFeedback extends Fx {
 
     chooser.getInt(1, 2) => int choice;
 
-    <<< "fxFeedback:" >>>;
+    if ( Config.debug == 1 ) { <<< "fxFeedback:" >>>; }
 
     if ( choice == 1 ) {
         LPF lpf @=> filter;
@@ -63,11 +63,13 @@ public class FxFeedback extends Fx {
     getLength( shortIntervals ) * 1000 => float delayLength;
     1 / getLength( longIntervals ) => lfoFreq;
 
-    <<< "* Filter type: HPF" >>>;
-    <<< "* filterBaseFreq", filterBaseFreq >>>;
-    <<< "* filterAmount", filterAmount >>>;
-    <<< "* delayLength", delayLength >>>;
-    <<< "* lfoFreq", lfoFreq >>>;
+    if ( Config.debug ) {
+        <<< "* Filter type: HPF" >>>;
+        <<< "* filterBaseFreq", filterBaseFreq >>>;
+        <<< "* filterAmount", filterAmount >>>;
+        <<< "* delayLength", delayLength >>>;
+        <<< "* lfoFreq", lfoFreq >>>;
+    }
 
     fun string idString() {
         return "FxFeedback";

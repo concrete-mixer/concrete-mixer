@@ -259,7 +259,7 @@ public class FxChain {
             }
         }
 
-        <<< "END OF FXCHAIN DEBUG" >>>;
+        <<< "END OF FXCHAIN INFO" >>>;
     }
 
     fun void tearDown() {

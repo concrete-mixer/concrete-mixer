@@ -42,7 +42,7 @@ public class FxRingMod extends Fx {
     fun void activity() {
         while ( active ) {
             shiftFreq();
-            <<< "sine.freq now", sine.freq() >>>;
+            if ( debug ) { <<< "sine.freq now", sine.freq() >>>; }
             c.getInt( 4, 16 ) * Time.beatDur => now;
         }
 
@@ -77,7 +77,7 @@ public class FxRingMod extends Fx {
             shiftTimeIncrement -=> shiftTime;
         }
 
-        <<< "oldfreq", oldFreq, "newfreq", newFreq, "shiftAmountIncrement", shiftAmountIncrement, "actual freq", freq >>>;
+        if ( debug ) { <<< "oldfreq", oldFreq, "newfreq", newFreq, "shiftAmountIncrement", shiftAmountIncrement, "actual freq", freq >>>; }
     }
 
     fun float getFreq() {

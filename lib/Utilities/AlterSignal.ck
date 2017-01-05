@@ -29,6 +29,7 @@ public class AlterSignal {
     Panner p;
     LFO lfo;
     Fader f;
+    Config.debug => int debug;
 
     fun void initialise( string filepathIn, Panner pIn, Fader fIn, SndBuf bufIn ) {
         bufIn @=> buf;
@@ -98,7 +99,7 @@ public class AlterSignal {
     }
 
     fun void logSignalChange(string effect) {
-        <<< effect, filepath, duration, "samples" >>>;
+        if ( debug ) { <<< effect, filepath, duration, "samples" >>>; }
     }
 
     // apply Concrete Mixer Fx effects to signal
@@ -138,7 +139,7 @@ public class AlterSignal {
             new FxReverseDelay @=> effect;
         }
 
-        <<< "EFFECTING", filepath, effect.idString() >>>;
+        if ( debug ) { <<< "EFFECTING", filepath, effect.idString() >>>; }
 
         buf => effect.input;
 
@@ -163,7 +164,7 @@ public class AlterSignal {
 
         fpan =< Mixer.leftOut;
         fpan =< Mixer.rightOut;
-        <<< "UNEFFECTING", filepath, effect.idString() >>>;
+        if ( debug ) { <<< "UNEFFECTING", filepath, effect.idString() >>>; }
     }
 
     fun void panBuf() {
@@ -198,12 +199,11 @@ public class AlterSignal {
         while ( panTime > 0::second ) {
             p.pan.pan() => float currPan;
             currPan + panAmountIncrement => p.pan.pan;
-            // <<< oldPan, newPan, panAmountIncrement, currPan >>>;
             panTimeIncrement => now;
             panTimeIncrement -=> panTime;
         }
 
-        <<< "oldPan", oldPan, "newPan", newPan, "panAmountIncrement", panAmountIncrement, "actual pan", p.pan.pan() >>>;
+        if ( debug ) { <<< "oldPan", oldPan, "newPan", newPan, "panAmountIncrement", panAmountIncrement, "actual pan", p.pan.pan() >>>; }
 
         duration => now;
     }
@@ -228,7 +228,7 @@ public class AlterSignal {
         c.getInt( 1, 8 ) => int repeato;
 
         logSignalChange("Reepeating");
-        <<< "Repeating", division, divisionLength, buf.gain() >>>;
+        if ( debug ) { <<< "Repeating", division, divisionLength, buf.gain() >>>; }
         0 => buf.gain;
 
         for ( 0 => int i; i < repeato; i++ ) {

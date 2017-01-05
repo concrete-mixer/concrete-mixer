@@ -25,6 +25,7 @@ Panner p;
 
 Chooser c;
 AlterSignal as;
+Config.debug => int debug;
 
 me.arg(0) => string filepath;
 me.arg(1) => string stream;
@@ -151,7 +152,7 @@ fun void activity() {
             buf.pos()::samp + duration > activityEndPoint
         ) {
             activityEndPoint - buf.pos()::samp => now;
-            <<< "ACTIVITY ENDING" >>>;
+            if ( debug ) { <<< "ACTIVITY ENDING" >>>; }
             return;
         }
 
@@ -159,7 +160,7 @@ fun void activity() {
         // shall we do anything to the signal?
         if ( c.takeAction( 8 ) ) {
             // delegate duration to AlterSignal
-            <<< "ALTERING SIGNAL ON", filepath >>>;
+            if ( debug ) { <<< "ALTERING SIGNAL ON", filepath >>>; }
             as.alterSignal( duration );
         }
         else {

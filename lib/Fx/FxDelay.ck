@@ -71,7 +71,8 @@ public class FxDelay extends Fx {
             chooser.getFloat( 0.2, 0.9 ) => delayMix;
         }
 
-        <<< "   FxDelay: delayLength", delayLength, "delayMix", delayMix >>>;
+        if ( debug ) { <<< "   FxDelay: delayLength", delayLength, "delayMix", delayMix >>>; }
+
         delayLength::ms => delay.max;
         delayLength::ms => delay.delay;
         0 => delayMix;

@@ -37,7 +37,8 @@ public class FxChorus extends Fx {
         chooser.getFloat( 0.1, 0.3 ) => depth;
         chooser.getFloat( 0.1, 0.6 ) => float mix;
 
-        <<< "   FxChorus: freq", freq, "depth", depth, "mix", mix >>>;
+        if ( debug ) { <<< "   FxChorus: freq", freq, "depth", depth, "mix", mix >>>; }
+
         freq => chorus.modFreq;
         depth => chorus.modDepth;
         mix => chorus.mix;

@@ -78,7 +78,8 @@ public class FxFilter extends Fx {
 
             spork ~ activity();
         }
-        <<< "   FxFilter:", filterChosen, "at", baseFilterFreq, "Hz", "q:", Q, "lfoFreq:", lfoFreq, "lfo amount:", amount >>>;
+
+        if ( debug ) { <<< "   FxFilter:", filterChosen, "at", baseFilterFreq, "Hz", "q:", Q, "lfoFreq:", lfoFreq, "lfo amount:", amount >>>; }
     }
 
     fun void activity() {

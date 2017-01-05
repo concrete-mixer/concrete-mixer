@@ -27,6 +27,8 @@ public class Fx {
     Chooser chooser;
     1 => int active;
 
+    Config.debug => int debug;
+
     Gain input, output;
 
     fun string idString() { return "Fx"; }

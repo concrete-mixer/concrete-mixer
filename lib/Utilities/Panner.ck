@@ -27,6 +27,8 @@ public class Panner extends LFO {
     [ "fixed point", "LFO" ] @=> string panTypes[];
     1 => int active;
 
+    Config.debug => int debug;
+
     Pan2 pan;
 
     fun void initialise( Pan2 inputPan ) {
@@ -85,7 +87,9 @@ public class Panner extends LFO {
             chooser.getFloat( 0.5, 5 ) => freq;
             chooser.getFloat( 0.2, 0.5 ) => amount;
         }
-        <<< "PanGain running changePan(): freq", freq, "amount", amount, "duration", "oscillator type", oscType >>>;
+
+        if ( debug ) { <<< "PanGain running changePan(): freq", freq, "amount", amount, "duration", "oscillator type", oscType >>>; }
+
         spork ~ changePan( freq, amount, oscType );
     }
 

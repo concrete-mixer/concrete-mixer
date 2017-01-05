@@ -37,8 +37,12 @@ public class FxGate extends Fx {
         -0.99 => amount;
         chooser.getFloat( 0.01, 0.05 ) => lfoOscFreq;
         input => g => output;
-        <<< "   FxGate: sine at", lfoBaseFreq, "Hz", "lfo amount:", amount >>>;
-        <<< "   Freq", lfoBaseFreq::second / Config.srate, 1 / lfoBaseFreq >>>;
+
+        if ( debug ) {
+            <<< "   FxGate: sine at", lfoBaseFreq, "Hz", "lfo amount:", amount >>>;
+            <<< "   Freq", lfoBaseFreq::second / Config.srate, 1 / lfoBaseFreq >>>;
+        }
+
         spork ~ activity();
     }
 
@@ -49,13 +53,6 @@ public class FxGate extends Fx {
             lfo.osc( lfoFreqFinal, amount, "sine" ) => float gainDelta;
             0.5 + gainDelta => g.gain;
             1::ms => now;
-        }
-    }
-
-    fun void volCheck() {
-        while ( true ) {
-            <<< g.gain() >>>;
-            1::second => now;
         }
     }
 }

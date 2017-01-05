@@ -186,7 +186,7 @@ class Dispatch {
 
             if ( totalConcurrentSounds == playIds.size() ) {
                 // our work here is done...?
-                <<< "PEACE OUT" >>>;
+                <<< "ENDING SOUNDCLOUD DISPATCHER" >>>;
                 return;
             }
 

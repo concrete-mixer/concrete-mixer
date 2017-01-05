@@ -85,7 +85,7 @@ public class FxFlanger extends Fx {
             "sine" => volType;
         }
 
-        <<< "   FxFlanger", "flangeType", flangeType, "oscType:", oscType, "volType:", volType, "oscFreq:", oscFreq, "volFreq:", volFreq, "oscAmount:", oscAmount, "volAmount:", volAmount, "baseDelay:", baseDelay >>>;
+        if ( debug ) { <<< "   FxFlanger", "flangeType", flangeType, "oscType:", oscType, "volType:", volType, "oscFreq:", oscFreq, "volFreq:", volFreq, "oscAmount:", oscAmount, "volAmount:", volAmount, "baseDelay:", baseDelay >>>; }
 
         0 => feedback.gain;
         baseDelay::ms => flanger.delay;

@@ -76,9 +76,7 @@ public class Chooser {
             0 => int alreadyChosen;
 
             for ( 0 => int j; j < choices.cap() - 1; j++ ) {
-                // <<< "j", j, choices[j] >>>;
                 if ( choices[j] == choice ) {
-                    // <<< choice, "already chosen" >>>;
                     1 => alreadyChosen;
                 }
             }
