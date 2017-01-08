@@ -29,6 +29,9 @@ for line in lines:
                 'tmp_path': '/tmp/concreteMixerStream' + stream
                 })
 
+if not len(streams):
+    sys.exit('No streams found to download')
+
 osc_client = OSC.OSCClient()
 
 # this is Concrete Mixer's own app key so please use it nicely
@@ -48,7 +51,8 @@ def download_stream_files(stream_data):
     except Exception as e:
         print e
 
-    os.mkdir(tmp_path)
+    if not os.path.veisdir(tmp_path):
+        os.mkdir(tmp_path)
 
     sc_client = soundcloud.Client(client_id=client_id)
 
@@ -70,6 +74,9 @@ def download_stream_files(stream_data):
 
     random.shuffle(ids)
 
+    if not len(ids):
+        sys.exit("NO SOUND FILES FOR STREAM {}".format(stream_data['url']))
+
     for id in ids:
         strid = str(id)
         path_id = tmp_path + '/' + strid
@@ -77,28 +84,34 @@ def download_stream_files(stream_data):
         fileflac = path_id + '.flac'
         filewav = path_id + '.wav'
 
-        with open(fileflac, 'wb') as handle:
-            response = requests.get(
-                'https://api.soundcloud.com/tracks/' + strid +\
-                '/download?client_id=' + client_id
-                )
+        if not os.path.isfile(filewav):
+            with open(fileflac, 'wb') as handle:
+                response = requests.get(
+                    'https://api.soundcloud.com/tracks/' + strid +\
+                    '/download?client_id=' + client_id
+                    )
 
-            for block in response.iter_content(1024):
-                handle.write(block)
+                for block in response.iter_content(1024):
+                    handle.write(block)
 
-            handle.close()
+                handle.close()
 
-        print("Got file " + fileflac)
-        track = AudioSegment.from_file(fileflac, 'flac')
-        track.export(filewav, format="wav")
-        print("Written " + filewav + ", notifying")
+            print("Got file " + fileflac)
+            track = AudioSegment.from_file(fileflac, 'flac')
+            track.export(filewav, format="wav")
 
-        osc_client.connect(('127.0.0.1', 3141))
-        oscmsg = OSC.OSCMessage()
-        oscmsg.setAddress('/notifyfile')
-        oscmsg.append('1')
-        oscmsg.append(filewav)
-        osc_client.send(oscmsg)
+        print("Got " + filewav + ", notifying")
+
+        notify_wav(filewav)
+pathe
+
+def notify_wav(filewav):
+    osc_client.connect(('127.0.0.1', 3141))
+    oscmsg = OSC.OSCMessage()
+    oscmsg.setAddress('/notifyfile')
+    oscmsg.append('1')
+    oscmsg.append(filewav)
+    osc_client.send(oscmsg)
 
 
 if __name__ == '__main__':
@@ -106,4 +119,4 @@ if __name__ == '__main__':
     pool.map(download_stream_files, streams)
 
 
-print("ALL DONE IN SOUNDCLOUD LAND")
+print("SOUNDCLOUD FILES DOWNLOAD COMPLETE")

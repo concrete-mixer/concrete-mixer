@@ -26,6 +26,9 @@
 # Uncomment and change to specify a different path
 # chuginPath=/usr/local/lib/chuck
 
+# Debug - if you want to see lots of messages about what CM is doing, set to 1
+debug=0
+
 # bpm (beats per minute)
 # Most of the system's timed parameters (eg delay times or slow oscillator
 # frequencies) will be aligned to fractions or multiples of this value.
@@ -38,10 +41,11 @@ bpm=90.0
 rpi=0
 
 # Chuck bufsize parameter
-bufsize=2048
+# If you've got playback dropouts pump this up to a power-of-2 value
+bufsize=4096
 
 # Chunk size for SndBuf file loading
-sndBufChunks=2048
+sndBufChunks=4096
 
 # Chuck samplerate parameter
 # If you're having problems with performance you can adjust to 32000 without
@@ -53,16 +57,30 @@ srate=44100
 # 1 enabled recording, 0 disabled
 record=0
 
+# mode determines how files are sourced: either from local directories
+# or from soundcloud playlists. use 'local' or 'soundcloud'
+# mode=soundcloud
+mode=soundcloud
+
 # Concrete mixer has the concept of streams - directories of sound files of a
 # particular kind. Having multiple streams allows a more even mix, for example
 # one stream could play background ambient sounds while another stream might
-# contain musical sounds. If these sounds were all in a single stream you might # have multiple musical sounds clashing with each other, or multiple background # sounds providing little aural focus. Separating kinds of sounds into their own# streams ensures the mix is more even.
+# contain musical sounds. If these sounds were all in a single stream you might
+# have multiple musical sounds clashing with each other, or multiple background
+# sounds providing little aural focus. Separating kinds of sounds into their own
+# streams ensures the mix is more even.
 #
 # You can define as many streams as you like, or just one. The convention for
 # a stream setting is stream<number>Path. There is no limit to the number of
 # streams save for CPU and sense.
-stream1Path=/home/pi/audio/stream1
-stream2Path=/home/pi/audio/stream2
+#
+# Conventions: soundcloud playlists are denoted by stream<N>Url (where <N> is a
+# number. Directories are denoted by stream<N>path.
+stream1Url=https://soundcloud.com/concrete-mixer/sets/concrete-mixer-main-stream
+stream2Url=https://soundcloud.com/concrete-mixer/sets/concrete-mixer-alt-stream
+
+# stream1Path=/home/pi/audio/alt
+# stream2Path=/home/pi/audio/main
 
 # stream<number>ConcurrentSounds directives specify how many files from the
 # specified stream should play concurrently. The default is 1.

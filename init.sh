@@ -54,19 +54,30 @@ fi
 
 if [[ $MODE == 'soundcloud' ]]
 then
-    source venv/bin/activate && python soundcloud-fetch.py &
+    source venv/bin/activate
 fi
 
 if [[ "$ENDLESS_PLAY" == 1 ]]
 then
     # All going well, this will run eternally
-    echo "Running Concrete Mixer for eternity, if possible"
+    echo "Running Concrete Mixer for eternity, where available"
     while [ true ]
     do
-        $CHUCK_PATH concrete.ck chugin-path:$CHUGIN_PATH srate:$SRATE bufsize:$BUFSIZE || break
+        if [[ $MODE == 'soundcloud' ]]
+        then
+            python soundcloud-fetch.py &
+        fi
+
+        $CHUCK_PATH concrete.ck --chugin-path:$CHUGIN_PATH --srate:$SRATE --bufsize:$BUFSIZE || break
     done
 else
     # Else, run just the once.
     echo "Running Concrete Mixer once"
-    $CHUCK_PATH concrete.ck
+
+    if [[ $MODE == 'soundcloud' ]]
+    then
+        python soundcloud-fetch.py &
+    fi
+
+    $CHUCK_PATH concrete.ck --chugin-path:$CHUGIN_PATH --srate:$SRATE --bufsize:$BUFSIZE
 fi

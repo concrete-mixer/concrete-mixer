@@ -90,6 +90,7 @@ class Dispatch {
                 }
 
                 if ( msg.address == "/notifyfile" ) {
+                    50::ms => now;
                     msg.getString(0) => string stream;
                     msg.getString(1) => string filepath;
                     Config.streamData.setFile(stream, filepath);
@@ -157,10 +158,10 @@ class Dispatch {
     }
 
     fun void initSoundcloud() {
-        spork ~ soundCloudDispatcher();
+        spork ~ soundCloudListener();
     }
 
-    fun void soundCloudDispatcher() {
+    fun void soundCloudListener() {
         // our task is to wait for the first files to come through for each
         // stream and initiate playback, which should be self-sustaining for
         // each concurrent item for the stream (until we run out of files,
@@ -186,7 +187,7 @@ class Dispatch {
 
             if ( totalConcurrentSounds == playIds.size() ) {
                 // our work here is done...?
-                <<< "ENDING SOUNDCLOUD DISPATCHER" >>>;
+                <<< "ENDING SOUNDCLOUD LISTENER" >>>;
                 return;
             }
 
@@ -237,7 +238,9 @@ class Dispatch {
 
         // Determine if any streams are still active
         for ( int i; i < playIds.size(); i++ ) {
-            if ( playIds[i] ) {
+            <<< "playId", i, playIds[i] >>>;
+
+            if ( playIds[i] == 1 ) {
                 // there is another stream still active
                 // so return false
                 0 => streamIsLast;
