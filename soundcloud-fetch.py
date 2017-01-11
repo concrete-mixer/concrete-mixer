@@ -51,7 +51,7 @@ def download_stream_files(stream_data):
     except Exception as e:
         print e
 
-    if not os.path.veisdir(tmp_path):
+    if not os.path.isdir(tmp_path):
         os.mkdir(tmp_path)
 
     sc_client = soundcloud.Client(client_id=client_id)
@@ -103,7 +103,6 @@ def download_stream_files(stream_data):
         print("Got " + filewav + ", notifying")
 
         notify_wav(filewav)
-pathe
 
 def notify_wav(filewav):
     osc_client.connect(('127.0.0.1', 3141))
