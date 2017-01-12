@@ -58,6 +58,17 @@ class StreamData {
         num => concurrentSounds[stream];
     }
 
+    fun int getTotalConcurrentSounds() {
+        int total;
+
+        for ( int i; i < streamsAvailable.cap(); i++ ) {
+            streamsAvailable[i] => string stream;
+            concurrentSounds[stream] + total => total;
+        }
+
+        return total;
+    }
+
     fun void setMode(string modeIn) {
         modeIn => mode;
     }
@@ -68,7 +79,6 @@ public class Config {
     static int debug;
     static float bpm;
     static int bufsize;
-    static int concurrentSounds;
     static int endlessPlay;
     static int fxChainEnabled;
     static int record;
@@ -92,7 +102,6 @@ class ConfigSet {
         0 => Config.debug;
         90 => Config.bpm;
         2048 => Config.bufsize;
-        2 => Config.concurrentSounds;
         0 => Config.endlessPlay;
         1 => Config.fxChainEnabled;
         0 => Config.record;

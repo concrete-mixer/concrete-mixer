@@ -28,6 +28,7 @@ public class Mixer {
     static Gain @ leftOut;
     static Gain @ rightOut;
     static Gain @ fxIn;
+    static SndBuf2 @ bufs[];
 
     static OscOut @ oscOut;
 }
@@ -64,6 +65,17 @@ if ( Config.record ) {
     Mixer.fxIn => blackhole;
     dac => wv => blackhole;
     null @=> wv;
+}
+
+Config.streamData.getTotalConcurrentSounds() => int bufTot;
+
+SndBuf2 bufs[bufTot];
+
+bufs @=> Mixer.bufs;
+
+for ( int i; i < bufs.size(); i++ ) {
+    Mixer.bufs[i] @=> SndBuf2 buf;
+    buf => Mixer.fxIn;
 }
 
 while ( ! Config.ended ){

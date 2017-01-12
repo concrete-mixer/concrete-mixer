@@ -34,17 +34,22 @@ Std.atoi(me.arg(2)) => int playId;
 
 <<< "Playing stream", stream ,  "filepath" ,  filepath ,  "playId" ,  playId >>>;
 
+Mixer.bufs[playId] @=> SndBuf2 buf;
+
 // set up buf
-SndBuf buf;
 Config.sndBufChunks => int chunks;
-chunks => buf.chunks;
-filepath => buf.read;
 
-// set up buf2 (may not be used if file is not two channel)
-SndBuf buf2;
+if ( buf.chunks() == Config.sndBufChunks ) {
+    chunks => buf.chunks;
+}
 
-0 => buf.gain => buf2.gain;
 2 * Time.barDur => dur fadeTime;
+
+0 => buf.gain;
+filepath => buf.read;
+fadeTime => now; // gives time to read in first part of file
+
+1 => buf.pos; // sets buf pos back to start
 
 if ( buf.channels() == 1 ) {
     buf => p.pan;
@@ -54,38 +59,20 @@ if ( buf.channels() == 1 ) {
 
     // send buf to fx
     // could make this conditional
-    buf => Mixer.fxIn;
     c.getFloat( -1.0, 1.0 ) => p.pan.pan;
 
-    // Spend two bars loading buffer
-    // Hopefully that's sufficient....
-    fadeTime => now;
     as.initialise( filepath, p, f, buf );
 }
 else {
-    chunks => buf2.chunks;
-
-    // Provide time for buf1 to read before
-    // reading buf2
-    Time.barDur => now;
-    filepath => buf2.read;
-    1 => buf2.channel;
-
     // swap channels half the time
     if ( c.getInt( 0, 1 ) ) {
-        buf => Mixer.leftOut;
-        buf2 => Mixer.rightOut;
+        buf.chan(0) => Mixer.leftOut;
+        buf.chan(1) => Mixer.rightOut;
     }
     else {
-        buf2 => Mixer.leftOut;
-        buf => Mixer.rightOut;
+        buf.chan(1) => Mixer.leftOut;
+        buf.chan(0) => Mixer.rightOut;
     }
-
-    // balance up time with mono samples to be consistent
-    Time.barDur => now;
-
-    buf => Mixer.fxIn;
-    buf2 => Mixer.fxIn;
 }
 
 
@@ -98,17 +85,23 @@ else {
     playbackDoubleChannel();
 }
 
-
 // disconnect
+buf =< Mixer.fxIn;
+
 if ( buf.channels() == 1 ) {
     buf =< p.pan;
+    p.pan.left =< Mixer.leftOut;
+    p.pan.right =< Mixer.rightOut;
 }
 else {
-    buf =< Mixer.leftOut;
-}
+    // need to cover all permutations as we mix it up a bit
+    buf.chan(0) =< Mixer.leftOut;
+    buf.chan(0) =< Mixer.rightOut;
+    buf.chan(1) =< Mixer.leftOut;
+    buf.chan(1) =< Mixer.rightOut;
 
-p.pan.left =< Mixer.leftOut;
-p.pan.right =< Mixer.rightOut;
+    buf =< Mixer.fxIn;
+}
 
 Mixer.oscOut.start("/playsound").add(stream).add(playId).send();
 
@@ -121,17 +114,14 @@ fun void playbackSingleChannel() {
 }
 
 fun void playbackDoubleChannel() {
-    1 => buf2.pos;
-    0 => buf2.gain;
     f.fadeIn( fadeTime, 1.0, buf );
-    f.fadeIn( fadeTime, 1.0, buf2 );
     buf.length() - fadeTime => now;
     f.fadeOut( fadeTime, buf );
-    f.fadeOut( fadeTime, buf2 );
     fadeTime => now;
 }
 
 fun void activity() {
+    buf.length() => now;
     // define threshold for checking if we should bail
     // for fadeout
     buf.length() - fadeTime => dur activityEndPoint;
