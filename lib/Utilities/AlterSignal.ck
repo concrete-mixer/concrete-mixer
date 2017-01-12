@@ -21,7 +21,7 @@
 -----------------------------------------------------------------------------*/
 
 public class AlterSignal {
-    SndBuf buf;
+    SndBuf @ buf;
     string filepath;
     dur duration;
 

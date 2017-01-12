@@ -85,9 +85,6 @@ else {
     playbackDoubleChannel();
 }
 
-// disconnect
-buf =< Mixer.fxIn;
-
 if ( buf.channels() == 1 ) {
     buf =< p.pan;
     p.pan.left =< Mixer.leftOut;
@@ -99,8 +96,6 @@ else {
     buf.chan(0) =< Mixer.rightOut;
     buf.chan(1) =< Mixer.leftOut;
     buf.chan(1) =< Mixer.rightOut;
-
-    buf =< Mixer.fxIn;
 }
 
 Mixer.oscOut.start("/playsound").add(stream).add(playId).send();
@@ -121,7 +116,6 @@ fun void playbackDoubleChannel() {
 }
 
 fun void activity() {
-    buf.length() => now;
     // define threshold for checking if we should bail
     // for fadeout
     buf.length() - fadeTime => dur activityEndPoint;
