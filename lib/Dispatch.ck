@@ -186,7 +186,10 @@ class Dispatch {
             }
 
             if ( totalConcurrentSounds == playIds.size() ) {
-                // our work here is done...?
+                // we've kicked off playSounds for the number of streams
+                // we have, and these should make OSC requests when complete
+                // thereby starting further playSounds
+                // We can stop here.
                 <<< "ENDING SOUNDCLOUD LISTENER" >>>;
                 return;
             }
@@ -238,8 +241,6 @@ class Dispatch {
 
         // Determine if any streams are still active
         for ( int i; i < playIds.size(); i++ ) {
-            <<< "playId", i, playIds[i] >>>;
-
             if ( playIds[i] == 1 ) {
                 // there is another stream still active
                 // so return false
