@@ -22,8 +22,9 @@
 
 
 class Dispatch {
-    0 => int fxMachineId;
-    0 => int ending;
+    int fxMachineId;
+    int ending;
+    int fxInitialised;
 
     int playIds[0];
     Fader f;
@@ -47,13 +48,7 @@ class Dispatch {
             initSoundcloud();
         }
 
-        if ( Config.fxChainEnabled ) {
-            getFxChain() => int fxChain;
-
-            // keep track of the machine id for fx chain so we can scupper it
-            // when file playback is complete.
-            Machine.add(me.dir() + "playFxChain.ck:" + fxChain) => fxMachineId;
-        }
+        <<< "DISPATCHER IS RUNNING, WAITING FOR SOUNDS" >>>;
 
         OscIn oin;
         3141 => oin.port;
@@ -81,12 +76,7 @@ class Dispatch {
                 }
 
                 if ( msg.address == "/playfxchain" ) {
-                    getFxChain() => int fxChain;
-
-                    // keep track of the machine id for fx chain so we can scupper it
-                    // when file playback is complete.
-
-                    Machine.add(me.dir() + "playFxChain.ck:" + fxChain) => fxMachineId;
+                    playFx();
                 }
 
                 if ( msg.address == "/notifyfile" ) {
@@ -234,6 +224,12 @@ class Dispatch {
                 endActivity();
             }
         }
+
+        // enable FX if not already in play
+        if ( Config.fxChainEnabled && ! fxInitialised ) {
+            playFx();
+            1 => fxInitialised;
+        }
     }
 
     fun int lastStream() {
@@ -285,6 +281,14 @@ class Dispatch {
         fxChainsUsed << choice;
 
         return choice;
+    }
+
+    fun void playFx() {
+        getFxChain() => int fxChain;
+
+        // keep track of the machine id for fx chain so we can scupper it
+        // when file playback is complete.
+        Machine.add(me.dir() + "playFxChain.ck:" + fxChain) => fxMachineId;
     }
 }
 

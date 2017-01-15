@@ -30,7 +30,7 @@ The following procedure will get you up and running with Concrete Mixer utilisin
 
 2. Install ChucK prerequisites:
 
-    `sudo apt update && sudo apt --assume-yes install git libsndfile1-dev bison flex libasound2-dev flac ffmpeg libavcodec-extra-53 python-pip virtualenv`
+    `sudo apt update && sudo apt --assume-yes install git libsndfile1-dev bison flex libasound2-dev flac ffmpeg libavcodec-extra-53 python-pip python-dev virtualenv`
 
 3. Clone ChucK from github repo, compile and install:
 
@@ -44,29 +44,19 @@ The following procedure will get you up and running with Concrete Mixer utilisin
 
     `cd chugins && make linux-alsa && sudo make install && cd -`
 
-5. Pythonate:
-
-    `virtualenv venv`
-
-    `pip install -r requirements`
-
-6. Download the audio files:
-
-    `wget https://www.dropbox.com/s/dvk4aoztqhzwkhc/concrete-mixer-files.zip && unzip concrete-mixer-files.zip`
-
-7. Unpack the audio files:
-
-    `cd audio/main && flac -d *.flac --delete-input-file && cd -`
-
-    `cd audio/alt && flac -d *.flac --delete-input-file && cd -`
-
-8. Install Concrete Mixer:
+5. Install Concrete Mixer:
 
     `git clone https://github.com/concrete-mixer/concrete-mixer`
 
     `cd concrete-mixer && cp concrete.conf.sample concrete.conf`
 
-9. Finally, run Concrète Mixer:
+6. Install python components (for Soundcloud functionality):
+
+    `virtualenv venv`
+
+    `pip install -r requirements`
+
+7. Finally, run Concrète Mixer:
 
     `./init.sh`
 

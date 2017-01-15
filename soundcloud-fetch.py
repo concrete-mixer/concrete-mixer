@@ -8,7 +8,6 @@ import requests
 import pprint
 import soundcloud
 from pydub import AudioSegment
-from pythonosc import udp_client, osc_message, osc_message_builder
 import OSC
 
 
