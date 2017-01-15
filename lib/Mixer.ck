@@ -52,8 +52,10 @@ Mixer.rightOut => dynoR; // right 'dry' out
 Mixer.fxIn => Mixer.leftOut;
 Mixer.fxIn => Mixer.rightOut;
 
+// playSound and playFx use this OscOut to send requests back to the dispatch
+// listener.
 new OscOut @=> Mixer.oscOut;
-("localhost", 3141) => Mixer.oscOut.dest;
+("localhost", 2424) => Mixer.oscOut.dest;
 
 if ( Config.record ) {
     WvOut2 wv;
