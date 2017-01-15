@@ -51,7 +51,7 @@ class Dispatch {
         <<< "DISPATCHER IS RUNNING, WAITING FOR SOUNDS" >>>;
 
         OscIn oin;
-        3141 => oin.port;
+        2424 => oin.port;
 
         "/playsound" => oin.addAddress;
         "/playfxchain" => oin.addAddress;
