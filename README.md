@@ -20,45 +20,27 @@ Concrète Mixer is intended for use on the latest model of Raspberry Pi (current
 
 Basic familiarity with running shell commands in linux, as well as installing and configuring Raspbian is required.
 
-## Installation and operation
+## Installation
 
-The following procedure will get you up and running with Concrete Mixer utilising a sound library I've made available for evaluatory use.
+The following procedure will get you up and running with Concrete Mixer on a Raspbery Pi.
 
 1. Ensure your Raspbian system packages are up to date:
 
-    `sudo apt-get update && sudo apt-get upgrade`
+    `sudo apt-get update && sudo apt-get upgrade && sudo apt-get install git`
 
-2. Install ChucK prerequisites:
-
-    `sudo apt update && sudo apt --assume-yes install git libsndfile1-dev bison flex libasound2-dev flac ffmpeg libavcodec-extra-53 python-pip python-dev virtualenv`
-
-3. Clone ChucK from github repo, compile and install:
-
-    `git clone https://github.com/ccrma/chuck`
-
-    `cd chuck/src && make linux-alsa && sudo make install && cd -`
-
-4. Clone the ChucK chugins (plugins) repo:
-
-    `git clone https://github.com/ccrma/chugins`
-
-    `cd chugins && make linux-alsa && sudo make install && cd -`
-
-5. Install Concrete Mixer:
+2. Clone the Concrete Mixer repo:
 
     `git clone https://github.com/concrete-mixer/concrete-mixer`
 
-    `cd concrete-mixer && cp concrete.conf.sample concrete.conf`
+3. Run the pi-install.sh script:
 
-6. Install python components (for Soundcloud functionality):
+    `sudo ./pi-install.sh`
 
-    `virtualenv venv`
-
-    `pip install -r requirements`
-
-7. Finally, run Concrète Mixer:
+4. That should do the trick. To run Concrete Mixer, type:
 
     `./init.sh`
+
+For non Raspberry Pi installations, inspect pi-install.sh and make the equivalent changes for your system until you can run `./init.sh`. You should find similar libaries for other Linux variants and Unices including MacOs.
 
 ### Making a Raspberry Pi into a Concrète Mixer
 
