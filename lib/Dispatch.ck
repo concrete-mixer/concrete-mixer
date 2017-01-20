@@ -266,7 +266,8 @@ class Dispatch {
 
     fun int getFxChain() {
         if ( fxChainsUsed.size() == fxChainsCount ) {
-            int fxChainsUsed[0];
+            <<< "ALL FX CHAINS HAVE BEEN USED, RESETTING TO ZERO" >>>;
+            0 => fxChainsUsed.size;
         }
 
         c.getInt(1, fxChainsCount) => int choice;
