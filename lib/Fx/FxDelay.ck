@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -27,10 +27,10 @@ public class FxDelay extends Fx {
     0.5 => feedback.gain;
     delay => feedback;
     feedback => input;
-    60.0 / Control.bpm * 1000.0 => float beatInterval; // BI = beat interval in ms;
+    60.0 / Config.bpm * 1000.0 => float beatInterval; // BI = beat interval in ms;
 
     // select a few interesting delay values
-    Control.bpmIntervalsMedium @=> float delayIntervals[];
+    Time.bpmIntervalsMedium @=> float delayIntervals[];
 
     fun string idString() {
         return "FxDelay";
@@ -71,7 +71,8 @@ public class FxDelay extends Fx {
             chooser.getFloat( 0.2, 0.9 ) => delayMix;
         }
 
-        <<< "   FxDelay: delayLength", delayLength, "delayMix", delayMix >>>;
+        if ( debug ) { <<< "   FxDelay: delayLength", delayLength, "delayMix", delayMix >>>; }
+
         delayLength::ms => delay.max;
         delayLength::ms => delay.delay;
         0 => delayMix;

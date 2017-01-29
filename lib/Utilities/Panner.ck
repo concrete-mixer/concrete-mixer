@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,8 @@ public class Panner extends LFO {
     15 => float waitMax;
     [ "fixed point", "LFO" ] @=> string panTypes[];
     1 => int active;
+
+    Config.debug => int debug;
 
     Pan2 pan;
 
@@ -85,7 +87,9 @@ public class Panner extends LFO {
             chooser.getFloat( 0.5, 5 ) => freq;
             chooser.getFloat( 0.2, 0.5 ) => amount;
         }
-        <<< "PanGain running changePan(): freq", freq, "amount", amount, "duration", "oscillator type", oscType >>>;
+
+        if ( debug ) { <<< "PanGain running changePan(): freq", freq, "amount", amount, "duration", "oscillator type", oscType >>>; }
+
         spork ~ changePan( freq, amount, oscType );
     }
 

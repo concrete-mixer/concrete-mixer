@@ -1,8 +1,8 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
-        https://github.com/soundforest/sound-forest
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
+        https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,14 +20,35 @@
     U.S.A.
 -----------------------------------------------------------------------------*/
 
-Fader fader;
-<<< "fading out" >>>;
+/*
+This file is now mighty short because all the fx chain functionality
+has been moved to lib/FxChain.ck.
 
-4 * Control.barDur => dur fadeTime;
-fader.fadeOut( fadeTime, Control.leftOut );
-fader.fadeOut( fadeTime, Control.rightOut );
-4 * Control.barDur => now;
+The separation of concerns is: FxChain takes care of the chain management,
+while this file looks after the control of the chain (how long it will
+execute, its shutdown, OSC calls).
+*/
 
-<<< "faded out" >>>;
-Control.oscSend.startMsg("fadeOutComplete", "i");
-1 => Control.oscSend.addInt;
+Chooser chooser;
+
+FxChain chain;
+
+Std.atoi(me.arg(0)) => int chainChoice;
+
+chain.fxChainBuild(chainChoice);
+
+// determine how long the chain will play for
+[ 16, 20, 24, 28, 32 ] @=> int bars[];
+
+bars[ chooser.getInt( 0, bars.cap() - 1 ) ] => int choice;
+
+Time.barDur * choice => dur fxTime;
+2 * Time.barDur => dur fadeTime;
+
+chain.fadeIn( fadeTime );
+fxTime - fadeTime => now;
+
+chain.fadeOut( fadeTime );
+chain.tearDown();
+
+Mixer.oscOut.start("/playfxchain").add(1).send();

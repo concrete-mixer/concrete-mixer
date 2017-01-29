@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -76,9 +76,7 @@ public class Chooser {
             0 => int alreadyChosen;
 
             for ( 0 => int j; j < choices.cap() - 1; j++ ) {
-                // <<< "j", j, choices[j] >>>;
                 if ( choices[j] == choice ) {
-                    // <<< choice, "already chosen" >>>;
                     1 => alreadyChosen;
                 }
             }
@@ -94,14 +92,14 @@ public class Chooser {
     }
 
     fun float getIntervalLong() {
-        getInt( 0, Control.bpmIntervalsLong.cap() - 1 ) => int choice;
+        getInt( 0, Time.bpmIntervalsLong.cap() - 1 ) => int choice;
 
-        return Control.bpmIntervalsLong[ choice ];
+        return Time.bpmIntervalsLong[ choice ];
     }
 
     fun float getIntervalShort() {
-        getInt( 0, Control.bpmIntervalsShort.cap() - 1 ) => int choice;
+        getInt( 0, Time.bpmIntervalsShort.cap() - 1 ) => int choice;
 
-        return Control.bpmIntervalsShort[ choice ];
+        return Time.bpmIntervalsShort[ choice ];
     }
 }

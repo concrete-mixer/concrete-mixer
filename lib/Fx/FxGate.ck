@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -37,8 +37,12 @@ public class FxGate extends Fx {
         -0.99 => amount;
         chooser.getFloat( 0.01, 0.05 ) => lfoOscFreq;
         input => g => output;
-        <<< "   FxGate: sine at", lfoBaseFreq, "Hz", "lfo amount:", amount >>>;
-        <<< "   Freq", lfoBaseFreq::second / Control.srate, 1 / lfoBaseFreq >>>;
+
+        if ( debug ) {
+            <<< "   FxGate: sine at", lfoBaseFreq, "Hz", "lfo amount:", amount >>>;
+            <<< "   Freq", lfoBaseFreq::second / Config.srate, 1 / lfoBaseFreq >>>;
+        }
+
         spork ~ activity();
     }
 
@@ -49,13 +53,6 @@ public class FxGate extends Fx {
             lfo.osc( lfoFreqFinal, amount, "sine" ) => float gainDelta;
             0.5 + gainDelta => g.gain;
             1::ms => now;
-        }
-    }
-
-    fun void volCheck() {
-        while ( true ) {
-            <<< g.gain() >>>;
-            1::second => now;
         }
     }
 }

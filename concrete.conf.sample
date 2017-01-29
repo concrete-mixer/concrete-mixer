@@ -1,0 +1,95 @@
+#    Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
+#
+#    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
+#        https://github.com/concrete-mixer/concrete-mixer
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+#    U.S.A.
+
+# Path to chuck binary. Defaults to ChucK standard linux install path
+# Change to specify a different path
+# chuckPath=/usr/local/bin/chuck
+
+# Path to chuck chugin plugins. Default is chugin standard linux install path.
+# Uncomment and change to specify a different path
+# chuginPath=/usr/local/lib/chuck
+
+# Debug - if you want to see lots of messages about what CM is doing, set to 1
+debug=0
+
+# bpm (beats per minute)
+# Most of the system's timed parameters (eg delay times or slow oscillator
+# frequencies) will be aligned to fractions or multiples of this value.
+# If you are working with recordings containing percussion you can specify a
+# compatible tempo (including decimal values if required)
+bpm=90.0
+
+# Is this meant to be played on an RPI? May attempt less CPU-intensive work
+# 1 for yes, 0 for no
+rpi=0
+
+# Chuck bufsize parameter
+# If you've got playback dropouts pump this up to a power-of-2 value
+bufsize=4096
+
+# Chunk size for SndBuf file loading
+sndBufChunks=4096
+
+# Chuck samplerate parameter
+# If you're having problems with performance you can adjust to 32000 without
+# much loss in highend frequency (check your sound card supports this rate)
+# Note you may wish to adjust your sound files' sample rates to match srate
+srate=44100
+
+# record each iteration of Concrete Mixer to a wav file
+# 1 enabled recording, 0 disabled
+record=0
+
+# mode determines how files are sourced: either from local directories
+# or from soundcloud playlists. use 'local' or 'soundcloud'
+# mode=soundcloud
+mode=soundcloud
+
+# Concrete mixer has the concept of streams - directories of sound files of a
+# particular kind. Having multiple streams allows a more even mix, for example
+# one stream could play background ambient sounds while another stream might
+# contain musical sounds. If these sounds were all in a single stream you might
+# have multiple musical sounds clashing with each other, or multiple background
+# sounds providing little aural focus. Separating kinds of sounds into their own
+# streams ensures the mix is more even.
+#
+# You can define as many streams as you like, or just one. The convention for
+# a stream setting is stream<number>Path. There is no limit to the number of
+# streams save for CPU and sense.
+#
+# Conventions: soundcloud playlists are denoted by stream<N>Url (where <N> is a
+# number. Directories are denoted by stream<N>path.
+stream1Url=https://soundcloud.com/concrete-mixer/sets/concrete-mixer-main-stream
+stream2Url=https://soundcloud.com/concrete-mixer/sets/concrete-mixer-alt-stream
+
+# stream1Path=/home/pi/audio/alt
+# stream2Path=/home/pi/audio/main
+
+# stream<number>ConcurrentSounds directives specify how many files from the
+# specified stream should play concurrently. The default is 1.
+stream1ConcurrentSounds=1
+stream2ConcurrentSounds=1
+
+# FX settings. 1 for enabled, 0 for disabled
+fxChainEnabled=1
+
+# Endless play means that when we've run out of sounds to play we
+# restart the app. 1 for endless, 0 for one-off.
+endlessPlay=0

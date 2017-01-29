@@ -2,102 +2,96 @@
 
 ## About
 
-Concrète Mixer is an ambient jukebox program. What does this mean? If you supply the software with a set of sound files, it will mix them together and apply effects to them. Each rendering of sounds is unique.
+Concrète Mixer is an program that mixes and scrambles a set of sound recordings in interesting ways. The name is a pun on [musique concrète](https://en.wikipedia.org/wiki/Musique_concr%C3%A8te).
 
-Concrète Mixer is designed to be run on a [Raspberry Pi](https://www.raspberrypi.org/). When a Pi is hooked up to loudspeakers your sounds can haunt any space of your choosing.
+Concrète Mixer is designed to be run on a [Raspberry Pi](https://www.raspberrypi.org/). You can either run Concrète Mixer:
+- through an rpi's audio out into a mixer or stereo amplifier
+- in a [Docker container](https://github.com/concrete-mixer/cm-rpi-docker-icecast) which will provide an [Icecast](https://icecast.org) mp3 stream suitable for internet radio broadcasting.
+
+Concrète Mixer can play audio files stored locally or downloaded them from a [SoundCloud](https://soundcloud.com) playlist.
 
 ### What does it sound like?
 
-Have a listen to an [hour long demo](https://concrete-mixer.bandcamp.com). This demo consists of two renderings of the app with the same set of sounds. The demo tracks are presented 'as-is' with no post-processing or editing. If you'd like to make use of the sound recordings used in the demo, or compare the raw files to how they sound rendered, you can [download them](https://s3-us-west-1.amazonaws.com/concrete-mixer/concrete-mixer-files.zip).
+Have a listen to an [hour long demo](https://concrete-mixer.bandcamp.com). This demo consists of two renderings of the app with the same set of sounds. The demo tracks are presented 'as-is' with no post-processing or editing.
 
 ### What's it written in?
 
-The audio processing is written in [ChucK](http://chuck.cs.princeton.edu). A [Perl](http://www.perl.org) script (with supporting libraries) takes care of the execution and process restarts.
+The audio processing is written in [ChucK](http://chuck.cs.princeton.edu). A small shell script is used to initiate playback. SoundCloud playlist download is facilitated with a python script.
 
 ## Prerequisites
 
-Concrète Mixer is intended for use on a Raspberry Pi 2 Model B running [Rasbpian](https://www.raspbian.org/). (Earlier Pi models *may* work with overclocking and special configuration settings applied.) In principle though, Concrète Mixer will run on any OSes/devices on which Perl and ChucK are available.
+Concrète Mixer is intended for use on the latest model of Raspberry Pi (currently Raspberry Pi 3) running [Rasbpian](https://www.raspbian.org/) GNU/Linux (currently version 'Jessie'). It can run on other hardware and operating systems with a bit of extra configuration but this documentation is focussed on Raspbian support only.
 
-Finally, basic familiarity with running shell commands in linux is required.
+## Installation
 
-## Installation and operation
+Concrète Mixer is a relatively simple program but has a lot of software dependencies and fiddly configuration. The easiest way to get up and running is to install one of the Concrete Mixer docker images.
 
-1. The first thing you'll need is a set of sound files you want the software to mix. If you don't yet have a collection of sound files, you can [use the Concrète Mixer demo files](https://s3-us-west-1.amazonaws.com/concrete-mixer/concrete-mixer-files.zip). See [Tips](#tips) regarding using your own sound files.
+### Install for evaluation via git checkout
 
-2. Visit the [Concrète Mixer GitHub page](https://github.com/concrete-mixer/concrete-mixer) and click the [Download ZIP](https://github.com/concrete-mixer/concrete-mixer/archive/master.zip) link.
-3. Unzip the code:
-``$ unzip concrete-mixer-master.zip``
-4. After unzipping you should have a directory called 'concrete-mixer-master'. Enter that directory and run the following commands to set up the config files:
-``$ cp conf/global.conf.sample conf/global.conf``
-``$ cp conf/concrete.conf.sample conf/concrete.conf``
+This is the best option with ChucK-savvy users who want to check Concrete Mixer out on a pi:
 
-5. Edit conf/concrete.conf and specify a directory location for your sounds:
-``concurrent_sounds_main_path=<insert your dir here>``
-Note that you can also supply a path for a second directory (concurrent_sounds_alt_path) for sounds that you don't want to be played against each other; instead these sounds will be mixed with the 'main' sounds.
+1. Clone the Concrete Mixer repo:
 
-6. It's nearly time to start the app. Before you can do so, however, you need to make a Perl environment setting:
-``$ export PERL5LIB=.:perllib``
-To make this permanent, run:
-``$ echo export PERL5LIB=.:perllib >> ~/.bashrc``
-(This assumes that you're using bash as your shell.)
+    `git clone https://github.com/concrete-mixer/concrete-mixer`
 
-7. Run the app typing the following from your app's directory:
-``./init.pl``
+2. Enter the repo directory:
 
-### Making a Raspberry Pi into a Concrète Mixer
+    `cd concrete-mixer`
 
-The intention of Concrète Mixer is to turn a Pi into a single-purpose sound machine that may be left to run without any supervision indefinitely. You don't have to do this, but if you'd like to, here's what you do:
+3. Copy concrete.conf.sample to concrete.conf:
 
-1. Edit conf/concrete.conf and set ``endless_play=1``. This will restart the app when it runs out of files to play.
-2. To run Concrète Mixer each time the Pi is started, edit ``/etc/inittab`` using your favorite editor (here assuming nano):
-    ``sudo nano /etc/inittab``
-    Enter your password if required.
-3. Search for the line ``1:2345:respawn:/sbin/getty 115200 tty1`` and comment it out by adding a ``#`` character at the start of line.
-4. Add the following code beneath the commented out line: ``1:2345:respawn:/bin/login -f pi tty1 </dev/tty1 >/dev/tty1 2>&1``
+    `cp concrete.conf.sample concrete.conf`
 
-    This line sets tty1 (the system's terminal number 1) to log in the pi user automatically on boot.
+4. Run init.sh
 
-5. To get the Pi to run Concrète Mixer automatically, edit /home/pi/.bashrc:
-    ``nano /home/pi/.bashrc``.
+    `./init.sh`
 
-6. At the bottom of the file, add the following lines:
-<code>
-    export PERL5LIB=<insert your path to concrete mixer dir here>/perllib
-    if [ $(tty) == /dev/tty1 ]; then
-        cd ~/concrete-mixer
-        perl init.pl
-    fi
-</code>
-The first line sets the $PERL5LIB environment variable automatically (mentioned above). The subsequent lines invoke Concrète Mixer if the current terminal is tty1 only. This means you can run the program in one terminal and can perform other tasks in other terminals.
+5. `concrete.conf.sample` is set up to source a couple of SoundCloud playlists for audio. If you want to use your own sounds or SoundCloud playlists, you can modify `config.conf` to suit.
 
-7. Save the file and restart the Pi. All going well, the Pi should start playing sound automatically after reboot.
 
-## General discussion
+### Creating a Concrete Mixing machine via docker
 
-### <a name="tips">Tips
+If you would like a Concrete Mixing machine that runs Concrete Mixer from boot and plugs into a home stereo or amplifier:
+
+INSTRUCTIONS TO GO HERE ONCE I'VE BUILT IMAGE
+
+
+### Creating a Concrete Mixing internet radio station
+
+See the documentation at the [cm-rpi-docker-icecast repo](https://github.com/concrete-mixer/cm-rpi-docker-icecast).
+
+
+## Customising configuration options
+
+A list of configuration options is documented in `concrete.conf.sample`.
+
+### SoundCloud support
+
+Concrete Mixer will download sound files from SoundCloud playlists as long the files are made downloadable (this can be configured in the `permissions` tab when you upload a sound.
+
+If not already compatible, downloaded files will be converted to wav so that ChucK can use them). The conversion process makes use of the [FFmpeg](https://ffmpeg.org) library, so any audio format that FFmpeg can convert should be acceptable. The following compressed formats are known to work:
+- mp3
+- ogg
+- aac
+- flac
+
+Compressed lossless audio (eg flac) is the optimal format having the best fidelity with a (relatively) small file size. In practice though whatever works for you is fine. Note that converting some formats may have a greater performance penality than others.
+
+
+## The art of Concrèting
+
+* Concrete Mixer was intended to mix field recordings of non-musical (or probably non musical) sounds together to create a surrealistic soundscape. However, the app could be used in other ways. For example, `concrete.conf` provides a tempo setting (`bpm`) which is used to define timings for things like LFO speeds, delay times, and fade times. You could potentially take musical recordings in a compatible tempo and key and mix them together.
 * From experience sound files of about 90 seconds to two and a half minutes seem to work best in terms of the flow of the mix, but this will depend on the dynamics of the recording and (to a large degree) the taste of the listener.
-* You should mix the samples' levels to be generally consistent so that any one sample should not be disproportionately louder than any other.
-* You can specify several configuration options in the conf/concrete.conf file. Read concrete.conf.sample for more options.
-* The Pi's analogue audio output is noisy; if possible use an HDMI audio splitter (preferably powered), or a USB sound card.
-* The chuck executable file distributed with Concrète Mixer was compiled on a Raspberry Pi 2 Model B. This binary *may not* work on earlier Pi Models as the Pi 2's CPU architecture is different.
-
-#### Running Concrète Mixer on other devices
-
-You should be able to run Concrète Mixer on OSX without much trouble; on Windows things will be much trickier.
-* [Information on how to install ChucK on various platforms](http://chuck.cs.princeton.edu/release)
-* [Information on how to install Perl on various platforms](http://www.perl.org/get.html)
-
-Note that on other platforms the ChucK executable and chugin files included with Concrète Mixer will not work as it has been compiled for the Pi. To use Concrète Mixer on other platforms you'll need to change the conf/global.conf file to point to a different ChucK executable (read the config file for more details).
+* You should mix the samples' levels to be generally consistent so that any one sample should not be disproportionately louder than any other. I tend to mix these reasonably quietly as enloudened environmental sound can be a bit exasperating blaring out over speakers.
+* You can specify several configuration options in the conf/concrete.conf file. Refer to `concrete.conf.sample` for more options.
+    * If you're having performance difficulties you can enable the rpi setting by setting rpi=1 in `concrete.conf`. This setting utilises a less CPU-intensive reverb ugen and also refrains from using a reverse delay chugen. The author can run CM on an rpi3 without needing this setting, but earlier models will require it.
+* The Pi's analogue audio output is noisy; better sound may be obtained by:
+    * routing digital audio through HDMI (run `raspi-config` > `Advanced options` > `Audio` to achieve this), and using an HDMI adapter with an audio out (preferably powered); or
+    * using a USB sound card.
 
 ## Licence
 
-This code is distributed under the GPL v2. See the COPYING file for more details. The ChucK binary is also GPL v2. The included Perl code is also GPL.
-
-## Acknowledgments
-
-* The [Chuck authors](http://chuck.cs.princeton.edu/doc/authors.html), especially for giving me their blessing to include the chuck binary with this program, since ChucK itself has no (up to date) Debian package.
-* Christian Renz, who authored the [Net::OpenSoundControl](http://search.cpan.org/~crenz/Net-OpenSoundControl-0.05/lib/Net/OpenSoundControl.pm) Perl module
-* Jonny Schulz, who authored the [Sys::Statistics::Linux](http://search.cpan.org/~bloonix/Sys-Statistics-Linux/lib/Sys/Statistics/Linux.pm) Perl module.
+This code is distributed under the GPL v2. See the COPYING file for more details.
 
 ## Contact
 <concretemixer.audio@gmail.com>

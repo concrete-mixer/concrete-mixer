@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -31,13 +31,14 @@ public class FxChorus extends Fx {
         1 => active;
 
         float freq, depth;
-        Control.bpmIntervalsLong @=> float chorusFreqs[];
+        Time.bpmIntervalsLong @=> float chorusFreqs[];
 
         1 / chorusFreqs[ chooser.getInt( 0, chorusFreqs.cap() - 1 ) ] => freq;
         chooser.getFloat( 0.1, 0.3 ) => depth;
         chooser.getFloat( 0.1, 0.6 ) => float mix;
 
-        <<< "   FxChorus: freq", freq, "depth", depth, "mix", mix >>>;
+        if ( debug ) { <<< "   FxChorus: freq", freq, "depth", depth, "mix", mix >>>; }
+
         freq => chorus.modFreq;
         depth => chorus.modDepth;
         mix => chorus.mix;

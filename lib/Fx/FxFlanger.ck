@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ public class FxFlanger extends Fx {
     LFO lfo;
     DelayA flanger;
     Gain feedback;
-    Control.bpmInterval => float bpmInterval;
+    Time.bpmInterval => float bpmInterval;
     bpmInterval * 4.0 => float barInterval;
 
     [
@@ -85,7 +85,7 @@ public class FxFlanger extends Fx {
             "sine" => volType;
         }
 
-        <<< "   FxFlanger", "flangeType", flangeType, "oscType:", oscType, "volType:", volType, "oscFreq:", oscFreq, "volFreq:", volFreq, "oscAmount:", oscAmount, "volAmount:", volAmount, "baseDelay:", baseDelay >>>;
+        if ( debug ) { <<< "   FxFlanger", "flangeType", flangeType, "oscType:", oscType, "volType:", volType, "oscFreq:", oscFreq, "volFreq:", volFreq, "oscAmount:", oscAmount, "volAmount:", volAmount, "baseDelay:", baseDelay >>>; }
 
         0 => feedback.gain;
         baseDelay::ms => flanger.delay;

@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -24,13 +24,16 @@ public class FxReverb extends Fx {
     GVerb gverb;
     JCRev jcrev;
 
-    if ( Control.rpi ) {
+    Chooser c;
+
+    if ( Config.rpi ) {
         input => jcrev => output;
     }
+    // Use something gruntier if pi not being used
     else {
         input => gverb => output;
-        // Use something gruntier if pi not being used
 
+        // TODO: randomize somewhat
         // for reference, the following are GVerb defaults:
         //      const float maxroomsize = 300.0f;
         //      float roomsize = 30.0f;
@@ -41,11 +44,30 @@ public class FxReverb extends Fx {
         //      float drylevel = 0.6f; //-1.9832f;
         //      float earlylevel = 0.4f; //-1.9832f;
         //      float taillevel = 0.5f;
+        // See also https://ccrma.stanford.edu/~spencer/ckdoc/chugins.html#GVerb
 
-        // TODO: randomize somewhat
-        10::second => gverb.revtime;
-        50.0 => gverb.roomsize;
-        0.4 => gverb.damping;
+        c.getInt(1, 2) => int choice;
+        0 => gverb.dry;
+
+        // biiig reverb
+        if ( choice == 1 ) {
+            5.0::second => gverb.revtime;
+            50.0 => gverb.roomsize;
+            0.2 => gverb.damping;
+            1.0 => gverb.tail;
+            0 => gverb.early;
+        }
+
+        // tight reverb
+        if ( choice == 2 ) {
+            0.2::second => gverb.revtime;
+            0.0 => gverb.damping;
+            10.0 => gverb.roomsize;
+            1.0 => gverb.tail;
+            1.0 => gverb.early;
+            1.0 => gverb.bandwidth;
+        }
+
     }
 
     fun string idString() { return "FxReverb"; }

@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ public class FxRingMod extends Fx {
     }
 
     fun void initialise() {
-        c.getFloat( 220, 550 ) => freq => sine.freq;
+        c.getFloat( 110, 330 ) => freq => sine.freq;
 
         spork ~ activity();
     }
@@ -42,8 +42,8 @@ public class FxRingMod extends Fx {
     fun void activity() {
         while ( active ) {
             shiftFreq();
-            <<< "sine.freq now", sine.freq() >>>;
-            c.getInt( 4, 16 ) * Control.beatDur => now;
+            if ( debug ) { <<< "sine.freq now", sine.freq() >>>; }
+            c.getInt( 4, 16 ) * Time.beatDur => now;
         }
 
         input =< ring =< output;
@@ -51,7 +51,7 @@ public class FxRingMod extends Fx {
     }
 
     fun void shiftFreq() {
-        Control.beatDur * 1 => dur shiftTime;
+        Time.beatDur * 1 => dur shiftTime;
         sine.freq() => float oldFreq;
         getFreq() => float newFreq;
 
@@ -77,11 +77,11 @@ public class FxRingMod extends Fx {
             shiftTimeIncrement -=> shiftTime;
         }
 
-        <<< "oldfreq", oldFreq, "newfreq", newFreq, "shiftAmountIncrement", shiftAmountIncrement, "actual freq", freq >>>;
+        if ( debug ) { <<< "oldfreq", oldFreq, "newfreq", newFreq, "shiftAmountIncrement", shiftAmountIncrement, "actual freq", freq >>>; }
     }
 
     fun float getFreq() {
-        [ 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 12.0 ] @=> float factors[];
+        [ 0.25, 0.5, 1.0, 2.0, 4.0 ] @=> float factors[];
 
         c.getInt( 0, factors.cap() -1 ) => int choice;
 

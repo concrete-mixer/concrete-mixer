@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@ public class FxFeedback extends Fx {
 
     chooser.getInt(1, 2) => int choice;
 
-    <<< "fxFeedback:" >>>;
+    if ( Config.debug == 1 ) { <<< "fxFeedback:" >>>; }
 
     if ( choice == 1 ) {
         LPF lpf @=> filter;
@@ -49,25 +49,27 @@ public class FxFeedback extends Fx {
     dyn => filter;
     1.1 => g.gain;
     0.50 => g2.gain;
-    60.0 / Control.bpm * 1000.0 => float beatInterval; // BI = beat interval in ms;
+    60.0 / Config.bpm * 1000.0 => float beatInterval; // BI = beat interval in ms;
     // 0 => filter.Q;
     0.05 => float lfoFreq;
     filterBaseFreq / 2 => float filterAmount;
 
     // select a few interesting delay values
-    Control.bpmIntervalsMedium @=> float mediumIntervals[];
-    Control.bpmIntervalsShort @=> float shortIntervals[];
-    Control.bpmIntervalsLong @=> float longIntervals[];
+    Time.bpmIntervalsMedium @=> float mediumIntervals[];
+    Time.bpmIntervalsShort @=> float shortIntervals[];
+    Time.bpmIntervalsLong @=> float longIntervals[];
 
 
     getLength( shortIntervals ) * 1000 => float delayLength;
     1 / getLength( longIntervals ) => lfoFreq;
 
-    <<< "* Filter type: HPF" >>>;
-    <<< "* filterBaseFreq", filterBaseFreq >>>;
-    <<< "* filterAmount", filterAmount >>>;
-    <<< "* delayLength", delayLength >>>;
-    <<< "* lfoFreq", lfoFreq >>>;
+    if ( Config.debug ) {
+        <<< "* Filter type: HPF" >>>;
+        <<< "* filterBaseFreq", filterBaseFreq >>>;
+        <<< "* filterAmount", filterAmount >>>;
+        <<< "* delayLength", delayLength >>>;
+        <<< "* lfoFreq", lfoFreq >>>;
+    }
 
     fun string idString() {
         return "FxFeedback";

@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------
     Concrète Mixer - an ambient sound jukebox for the Raspberry Pi
 
-    Copyright (c) 2014 Stuart McDonald  All rights reserved.
+    Copyright (c) 2014-2016 Stuart McDonald  All rights reserved.
         https://github.com/concrete-mixer/concrete-mixer
 
     This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,8 @@ public class Fx {
     Chooser chooser;
     1 => int active;
 
+    Config.debug => int debug;
+
     Gain input, output;
 
     fun string idString() { return "Fx"; }
@@ -38,7 +40,6 @@ public class Fx {
     // sets active to false, so when fx.execute while block
     // next loops, it will shut down
     fun void tearDown() {
-        <<< "calling Fx.tearDown()" >>>;
         0 => active;
     }
 }
