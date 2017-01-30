@@ -20,7 +20,7 @@
 
 #!/bin/bash
 
-ENDLESS_PLAY=0
+DAC=1
 
 # Before kicking off Concrete Mixer we need to know if we're up for endless
 # play mode. To do this extremely cheaply and cheerfully, awk concrete.conf
@@ -33,10 +33,10 @@ fi
 # Here things get a bit awk-ward.
 CHUCK_PATH=`awk 'match($0, /^chuckPath=.*$/) { print substr($0, 11) }' ./concrete.conf`
 CHUGIN_PATH=`awk 'match($0, /^chuginPath=.*$/) { print substr($0, 12) }' ./concrete.conf`
-ENDLESS_PLAY=`awk 'match($0, /^endlessPlay=(1|0)$/) { print substr($0, 13, 1) }' ./concrete.conf`
 BUFSIZE=`awk 'match($0, /^bufsize=[0-9]+$/) { print substr($0, 9) }' ./concrete.conf`
 SRATE=`awk 'match($0, /^srate=[0-9]+$/) { print substr($0, 7) }' ./concrete.conf`
 MODE=`awk 'match($0, /^mode=.+$/) { print substr($0, 6) }' ./concrete.conf`
+DAC=`awk 'match($0, /^dac=.+$/) { print substr($0, 5) }' ./concrete.conf`
 
 if [[ ! -x $CHUCK_PATH || ! -x $CHUGIN_PATH ]]
 then
@@ -52,32 +52,19 @@ then
 fi
 
 
+$EXEC_STRING=$CHUCK_PATH concrete.ck --chugin-path:$CHUGIN_PATH --srate:$SRATE --bufsize:$BUFSIZE --dac:$DAC
+
 if [[ $MODE == 'soundcloud' ]]
 then
     source venv/bin/activate
 fi
 
-if [[ "$ENDLESS_PLAY" == 1 ]]
+# Else, run just the once.
+echo "Running Concrete Mixer"
+
+if [[ $MODE == 'soundcloud' ]]
 then
-    # All going well, this will run eternally
-    echo "Running Concrete Mixer for eternity, where available"
-    while [ true ]
-    do
-        if [[ $MODE == 'soundcloud' ]]
-        then
-            python soundcloud-fetch.py &
-        fi
-
-        $CHUCK_PATH concrete.ck --chugin-path:$CHUGIN_PATH --srate:$SRATE --bufsize:$BUFSIZE || break
-    done
-else
-    # Else, run just the once.
-    echo "Running Concrete Mixer once"
-
-    if [[ $MODE == 'soundcloud' ]]
-    then
-        python soundcloud-fetch.py &
-    fi
-
-    $CHUCK_PATH concrete.ck --chugin-path:$CHUGIN_PATH --srate:$SRATE --bufsize:$BUFSIZE
+    python soundcloud-fetch.py &
 fi
+
+$CHUCK_PATH concrete.ck --chugin-path:$CHUGIN_PATH --srate:$SRATE --bufsize:$BUFSIZE --dac:$DAC
