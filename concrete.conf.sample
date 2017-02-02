@@ -89,3 +89,6 @@ stream2ConcurrentSounds=1
 
 # FX settings. 1 for enabled, 0 for disabled
 fxChainEnabled=1
+
+# Specify which sound card to use (default is 1)
+# dac=1
