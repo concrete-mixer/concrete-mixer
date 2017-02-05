@@ -24,13 +24,13 @@ Concrète Mixer is intended for use on the latest model of Raspberry Pi (current
 
 ## Installation
 
-Concrète Mixer is a relatively simple program but has a lot of software dependencies and fiddly configuration. The easiest way to get up and running is to install one of the Concrete Mixer docker images.
+Concrète Mixer is a relatively simple program but has a lot of software dependencies and fiddly configuration. The easiest way to get up and running is to install one of the Concrète Mixer docker images.
 
 ### Install for evaluation via git checkout
 
-This is the best option with ChucK-savvy users who want to check Concrete Mixer out on a pi:
+This is the best option with ChucK-savvy users who want to check Concrète Mixer out on a pi:
 
-1. Clone the Concrete Mixer repo:
+1. Clone the Concrète Mixer repo:
 
     `git clone https://github.com/concrete-mixer/concrete-mixer`
 
@@ -42,32 +42,33 @@ This is the best option with ChucK-savvy users who want to check Concrete Mixer 
 
     `cp concrete.conf.sample concrete.conf`
 
+4. Run ./pi-install.sh to install various packages (note that it's probably easier to use a Docker image; see below.)
+
 4. Run init.sh
 
     `./init.sh`
 
-5. `concrete.conf.sample` is set up to source a couple of SoundCloud playlists for audio. If you want to use your own sounds or SoundCloud playlists, you can modify `config.conf` to suit.
+5. `concrete.conf.sample` is set up to source a couple of SoundCloud playlists for audio. If you want to use your own sounds on the pi or from another SoundCloud playlist, you can modify `config.conf` to suit.
 
 
-### Creating a Concrete Mixing machine via docker
+### Concrète Mixing machine via docker
 
-If you would like a Concrete Mixing machine that runs Concrete Mixer from boot and plugs into a home stereo or amplifier:
-
-INSTRUCTIONS TO GO HERE ONCE I'VE BUILT IMAGE
+There's a [Docker image](https://github.com/concrete-mixer/cm-rpi-docker-dac) which installs Concrete Mixer and its dependencies automatically.
 
 
-### Creating a Concrete Mixing internet radio station
+### Creating a Concrète Mixing internet radio station
 
-See the documentation at the [cm-rpi-docker-icecast repo](https://github.com/concrete-mixer/cm-rpi-docker-icecast).
+If you'd like to operate Concrète Mixer as a radio station, there's a [Docker image](https://github.com/concrete-mixer/cm-rpi-docker-internet) that marries up Concrète Mixer with Darkice and Icecast2 to provide an internet radio stream.
 
 
 ## Customising configuration options
 
 A list of configuration options is documented in `concrete.conf.sample`.
 
+
 ### SoundCloud support
 
-Concrete Mixer will download sound files from SoundCloud playlists as long the files are made downloadable (this can be configured in the `permissions` tab when you upload a sound.
+Concrète Mixer will download sound files from SoundCloud playlists as long the files are made downloadable (this can be configured in the `permissions` tab when you upload a sound.
 
 If not already compatible, downloaded files will be converted to wav so that ChucK can use them). The conversion process makes use of the [FFmpeg](https://ffmpeg.org) library, so any audio format that FFmpeg can convert should be acceptable. The following compressed formats are known to work:
 - mp3
@@ -80,7 +81,7 @@ Compressed lossless audio (eg flac) is the optimal format having the best fideli
 
 ## The art of Concrèting
 
-* Concrete Mixer was intended to mix field recordings of non-musical (or probably non musical) sounds together to create a surrealistic soundscape. However, the app could be used in other ways. For example, `concrete.conf` provides a tempo setting (`bpm`) which is used to define timings for things like LFO speeds, delay times, and fade times. You could potentially take musical recordings in a compatible tempo and key and mix them together.
+* Concrète Mixer was intended to mix field recordings of non-musical (or probably non musical) sounds together to create a surrealistic soundscape. However, the app could be used in other ways. For example, `concrete.conf` provides a tempo setting (`bpm`) which is used to define timings for things like LFO speeds, delay times, and fade times. You could potentially take musical recordings in a compatible tempo and key and mix them together.
 * From experience sound files of about 90 seconds to two and a half minutes seem to work best in terms of the flow of the mix, but this will depend on the dynamics of the recording and (to a large degree) the taste of the listener.
 * You should mix the samples' levels to be generally consistent so that any one sample should not be disproportionately louder than any other. I tend to mix these reasonably quietly as enloudened environmental sound can be a bit exasperating blaring out over speakers.
 * You can specify several configuration options in the conf/concrete.conf file. Refer to `concrete.conf.sample` for more options.
