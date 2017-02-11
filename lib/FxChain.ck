@@ -157,19 +157,12 @@ public class FxChain {
 
         if ( choice == 17 ) {
             [
-                new FxDelay,
-                new FxDownSampler
-            ] @=> fxChain;
-        }
-
-        if ( choice == 18 ) {
-            [
                 new FxDownSampler,
                 new FxDelayVariable
             ] @=> fxChain;
         }
 
-        if ( choice == 19 ) {
+        if ( choice == 18 ) {
             [
                 new FxDownSampler,
                 new FxDelay,
@@ -179,22 +172,30 @@ public class FxChain {
 
         // Beyond here all choices are for Config.rpi == 0 only
         // because they feature Chugens
-        if ( choice == 20 ) {
+        if ( choice == 19 ) {
             [
                 new FxGate,
                 new FxReverseDelay
             ] @=> fxChain;
         }
 
-        if ( choice == 21 ) {
+        if ( choice == 20 ) {
             [
                 new FxFlanger,
                 new FxReverseDelay
             ] @=> fxChain;
         }
 
+        if ( choice == 21 ) {
+            [
+                new FxDelayVariable,
+                new FxReverseDelay
+            ] @=> fxChain;
+        }
+
         if ( choice == 22 ) {
             [
+                new FxFilter,
                 new FxDelayVariable,
                 new FxReverseDelay
             ] @=> fxChain;
@@ -203,26 +204,18 @@ public class FxChain {
         if ( choice == 23 ) {
             [
                 new FxFilter,
-                new FxDelayVariable,
                 new FxReverseDelay
             ] @=> fxChain;
         }
 
         if ( choice == 24 ) {
             [
-                new FxFilter,
-                new FxReverseDelay
-            ] @=> fxChain;
-        }
-
-        if ( choice == 25 ) {
-            [
                 new FxGate,
                 new FxReverseDelay
             ] @=> fxChain;
         }
 
-        if ( choice == 26 ) {
+        if ( choice == 25 ) {
             // FxPassthrough required for a chain
             // as ChucK doesn't allow array ref assignment
             // of single item Object array...

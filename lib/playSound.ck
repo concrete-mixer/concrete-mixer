@@ -109,7 +109,7 @@ fun void playbackSingleChannel() {
 }
 
 fun void playbackDoubleChannel() {
-    f.fadeIn( fadeTime, 1.0, buf );
+    f.fadeIn( fadeTime, 0.5, buf );
     buf.length() - fadeTime => now;
     f.fadeOut( fadeTime, buf );
     fadeTime => now;
