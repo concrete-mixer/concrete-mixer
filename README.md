@@ -53,7 +53,7 @@ This is the best option with ChucK-savvy users who want to check Concrète Mixer
 
 ### Concrète Mixing machine via docker
 
-There's a [Docker image](https://github.com/concrete-mixer/cm-rpi-docker-dac) which installs Concrete Mixer and its dependencies automatically.
+There's a [Docker image](https://github.com/concrete-mixer/cm-rpi-docker-dac) which installs Concrète Mixer and its dependencies automatically.
 
 
 ### Creating a Concrète Mixing internet radio station
