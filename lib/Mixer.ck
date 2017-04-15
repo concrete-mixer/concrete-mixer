@@ -31,6 +31,7 @@ public class Mixer {
     static SndBuf2 @ bufs[];
 
     static OscOut @ oscOut;
+    static OscOut @ oscWeb;
 }
 
 // populate vars
@@ -56,6 +57,11 @@ Mixer.fxIn => Mixer.rightOut;
 // listener.
 new OscOut @=> Mixer.oscOut;
 ("localhost", 2424) => Mixer.oscOut.dest;
+
+if ( Config.oscWeb ) {
+    new OscOut @=> Mixer.oscWeb;
+    ("localhost", Config.oscWebPort) => Mixer.oscWeb.dest;
+}
 
 if ( Config.record ) {
     WvOut2 wv;

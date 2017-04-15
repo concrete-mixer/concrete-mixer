@@ -87,6 +87,8 @@ public class Config {
     static int ended;
     static int fxUsed[];
     static int sndBufChunks;
+    static int oscWeb;
+    static int oscWebPort;
 }
 
 class ConfigSet {
@@ -108,6 +110,8 @@ class ConfigSet {
         0 => Config.rpi;
         44100 => Config.srate;
         512 => Config.sndBufChunks;
+        0 => Config.oscWeb;
+        0 => Config.oscWebPort;
     }
 
     fun void _setValuesFromConfig() {
@@ -183,6 +187,14 @@ class ConfigSet {
         if ( key == "sndBufChunks" ) {
             intValue => Config.sndBufChunks;
             return;
+        }
+
+        if ( key == "oscWeb" ) {
+            intValue => Config.oscWeb;
+        }
+
+        if ( key == "oscWebPort" ) {
+            intValue => Config.oscWebPort;
         }
 
         // finally, audio sources

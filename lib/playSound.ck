@@ -49,6 +49,12 @@ if ( buf.chunks() == Config.sndBufChunks ) {
 filepath => buf.read;
 fadeTime => now; // gives time to read in first part of file
 
+// This is only relevant for Concrete Mixer Radio
+if ( Config.oscWeb ) {
+    // Tell the web server something's happening
+    Mixer.oscWeb.start("/playsound").add(filepath).add(stream).send();
+}
+
 1 => buf.pos; // sets buf pos back to start
 
 if ( buf.channels() == 1 ) {

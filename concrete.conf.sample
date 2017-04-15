@@ -92,3 +92,7 @@ fxChainEnabled=1
 
 # Specify which sound card to use (default is 1)
 # dac=1
+
+# This is for Concrete Mixer Radio - please ignore
+# oscWeb=0
+# oscWebPort=0
