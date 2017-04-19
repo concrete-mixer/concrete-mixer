@@ -1,11 +1,11 @@
 import random
 import re
 import sys
-import os, shutil
+import os
+import shutil
 from multiprocessing import Pool
 
 import requests
-import pprint
 import soundcloud
 from pydub import AudioSegment
 import OSC
@@ -18,9 +18,9 @@ filename = 'concrete.conf'
 lines = open(filename, 'r').read().split('\n')
 
 for line in lines:
-    matches = re.match( r'^stream(\d+)Url=(.*)$', line )
+    matches = re.match(r'^stream(\d+)Url=(.*)$', line)
 
-    if ( matches ):
+    if matches:
         stream = matches.group(1)
         streams.append({
                 'stream': matches.group(1),
@@ -37,18 +37,16 @@ osc_client = OSC.OSCClient()
 client_id = '11bab725274cff587d5908c18cd501c2'
 
 
-
 def download_stream_files(stream_data):
     # because of Soundcloud API's T&Cs we can't store files we download
     # so purge whatever might have been there
     tmp_path = stream_data['tmp_path']
     url = stream_data['url']
-    stream = stream_data['stream']
 
     try:
         shutil.rmtree(tmp_path)
     except Exception as e:
-        print e
+        print(e)
 
     if not os.path.isdir(tmp_path):
         os.mkdir(tmp_path)
@@ -57,9 +55,9 @@ def download_stream_files(stream_data):
 
     url = stream_data['url']
 
-    result = sc_client.get('/resolve',
-            url=url
-            )
+    result = sc_client.get(
+        '/resolve', url=url
+    )
 
     tracks = []
 
@@ -96,15 +94,14 @@ def download_stream_files(stream_data):
         if not os.path.isfile(file_out):
             with open(file_in, 'wb') as handle:
                 response = requests.get(
-                    'https://api.soundcloud.com/tracks/' + strid +\
-                    '/download?client_id=' + client_id
-                    )
+                    'https://api.soundcloud.com/tracks/{}'.format(strid) +
+                    '/download?client_id={}'.format(client_id)
+                )
 
                 for block in response.iter_content(1024):
                     handle.write(block)
 
                 handle.close()
-
 
             if needs_conversion:
                 track_out = AudioSegment.from_file(file_in, ext)
@@ -113,6 +110,7 @@ def download_stream_files(stream_data):
         print("Got " + file_out + ", notifying")
 
         notify_wav(file_out)
+
 
 def notify_wav(file_out):
     osc_client.connect(('127.0.0.1', 2424))
