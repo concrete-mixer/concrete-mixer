@@ -65,7 +65,7 @@ public class AlterSignal {
         }
 
         if ( choice == 6 ) {
-            pitchOsc();
+            octavate();
         }
 
         // all other choices involve applying Fx modules
@@ -164,6 +164,7 @@ public class AlterSignal {
 
         fpan =< Mixer.leftOut;
         fpan =< Mixer.rightOut;
+
         if ( debug ) { <<< "UNEFFECTING", filepath, effect.idString() >>>; }
     }
 
@@ -319,22 +320,21 @@ public class AlterSignal {
         }
     }
 
-    fun void pitchOsc() {
-        1 / ( Time.bpmInterval * 16 ) => float lfoFreq;
-        0.75 => float lfoAmount;
+    fun void octavate() {
+        duration / 4 => dur length;
+        buf.pos() => int pos;
+        1 => int octave;
 
-        // there's only one effect for stereo signals
-        while ( duration > 0::second ) {
-            lfo.osc( lfoFreq, lfoAmount, "sine" ) => float freqDelta;
-            1 + freqDelta => buf.rate;
-
-            Time.beatDur / 4 => dur targetDuration;
-
-            targetDuration -=> duration;
-            targetDuration => now;
+        while ( octave < 8 ) {
+            <<< octave, length, pos >>>;
+            octave => buf.rate;
+            length / 2 => length;
+            length => now;
+            octave++;
+            pos => buf.pos;
         }
 
-        // tidy things up
         1 => buf.rate;
+        ( duration / 2 ) => now;
     }
 }
