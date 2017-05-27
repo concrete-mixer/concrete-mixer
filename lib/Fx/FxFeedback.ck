@@ -48,7 +48,7 @@ public class FxFeedback extends Fx {
     dyn.limit();
     dyn => filter;
     1.1 => g.gain;
-    0.50 => g2.gain;
+    0.25 => g2.gain;
     60.0 / Config.bpm * 1000.0 => float beatInterval; // BI = beat interval in ms;
     // 0 => filter.Q;
     0.05 => float lfoFreq;
