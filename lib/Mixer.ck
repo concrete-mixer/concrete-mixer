@@ -50,9 +50,6 @@ Mixer.rightOut => dynoR; // right 'dry' out
 
 0.3 => Mixer.fxIn.gain;
 
-Mixer.fxIn => Mixer.leftOut;
-Mixer.fxIn => Mixer.rightOut;
-
 // playSound and playFx use this OscOut to send requests back to the dispatch
 // listener.
 new OscOut @=> Mixer.oscOut;
