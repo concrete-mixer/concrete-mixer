@@ -29,7 +29,7 @@ class Dispatch {
     int playIds[0];
     Fader f;
 
-    26 => int fxChainsCount;
+    25 => int fxChainsCount;
 
     if ( Config.rpi ) {
         20 => fxChainsCount;
