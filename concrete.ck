@@ -49,6 +49,8 @@ Machine.add(lib_path + "Fx/FxRingMod.ck");
 Machine.add(lib_path + "Fx/FxDownSampler.ck");
 Machine.add(lib_path + "Fx/ReverseDelay.ck");
 Machine.add(lib_path + "Fx/FxReverseDelay.ck");
+Machine.add(lib_path + "Fx/SpeedDelay.ck");
+Machine.add(lib_path + "Fx/FxSpeedDelay.ck");
 Machine.add(lib_path + "Fx/FxFeedback.ck");
 Machine.add(lib_path + "Fx/FxPassthrough.ck");
 

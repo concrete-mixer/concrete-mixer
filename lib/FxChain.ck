@@ -229,6 +229,13 @@ public class FxChain {
             ] @=> fxChain;
         }
 
+        if ( choice == 20 ) {
+            [
+                new FxSpeedDelay,
+                new FxPassthrough
+            ] @=> fxChain;
+        }
+
         <<< "STARTING FX CHAIN: ", choice >>>;
         fxChainFx();
     }
