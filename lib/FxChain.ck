@@ -10,26 +10,10 @@ public class FxChain {
     // spork ~ panner.initialise(outputPan);
     Fx @ fxChain[];
 
-    UGen outLeft, outRight;
-
-    outLeft => Mixer.leftOut;
-    outRight => Mixer.rightOut;
     Mixer.fxIn => inputGain;
 
-    // Fx chain is mono, let's make a little cheap stereo
-    // via a short delay on one of the channels
-    Delay delay;
-    chooser.getDur( 0.01, 0.04 ) => delay.delay;
-
-    // should left side be delayed or right?
-    if ( chooser.getInt( 0, 1 ) ) {
-        outputPan.left => outLeft;
-        outputPan.right => delay => outRight;
-    }
-    else {
-        outputPan.left => delay => outLeft;
-        outputPan.right => outRight;
-    }
+    outputPan.left => Mixer.leftOut;
+    outputPan.right => Mixer.rightOut;
 
     fun void fxChainBuild(int choice) {
         // Define the fx chains. Originally we defined them randomly
@@ -59,7 +43,7 @@ public class FxChain {
 
         if ( choice == 4 ) {
             [
-                new FxHarmonicDelay,
+                new FxFlanger,
                 new FxDelay
             ] @=> fxChain;
         }
@@ -67,63 +51,39 @@ public class FxChain {
         if ( choice == 5 ) {
             [
                 new FxFlanger,
-                new FxDelay
+                new FxDelayVariable
             ] @=> fxChain;
         }
 
         if ( choice == 6 ) {
             [
-                new FxFlanger,
+                new FxFilter,
                 new FxDelayVariable
             ] @=> fxChain;
         }
 
         if ( choice == 7 ) {
             [
-                new FxFilter,
+                new FxGate,
                 new FxDelayVariable
             ] @=> fxChain;
         }
 
         if ( choice == 8 ) {
             [
-                new FxGate,
-                new FxDelayVariable
+                new FxDelay,
+                new FxReverb
             ] @=> fxChain;
         }
 
         if ( choice == 9 ) {
-            [
-                new FxDelay,
-                new FxReverb,
-                new FxChorus
-            ] @=> fxChain;
-        }
-
-        if ( choice == 10 ) {
-            [
-                new FxDelay,
-                new FxFilter,
-                new FxReverb
-            ] @=> fxChain;
-        }
-
-        if ( choice == 11 ) {
-            [
-                new FxDelay,
-                new FxFlanger,
-                new FxReverb
-            ] @=> fxChain;
-        }
-
-        if ( choice == 12 ) {
             [
                 new FxDelayVariable,
                 new FxDelay
             ] @=> fxChain;
         }
 
-        if ( choice == 13 ) {
+        if ( choice == 10 ) {
             [
                 new FxFilter,
                 new FxGate,
@@ -131,23 +91,14 @@ public class FxChain {
             ] @=> fxChain;
         }
 
-        if ( choice == 14 ) {
+        if ( choice == 11 ) {
             [
                 new FxRingMod,
-                new FxFlanger,
                 new FxDelay
             ] @=> fxChain;
         }
 
-        if ( choice == 15 ) {
-            [
-                new FxRingMod,
-                new FxFilter,
-                new FxDelayVariable
-            ] @=> fxChain;
-        }
-
-        if ( choice == 16 ) {
+        if ( choice == 12 ) {
             [
                 new FxRingMod,
                 new FxHarmonicDelay,
@@ -155,45 +106,30 @@ public class FxChain {
             ] @=> fxChain;
         }
 
-        if ( choice == 17 ) {
-            [
-                new FxDownSampler,
-                new FxDelayVariable
-            ] @=> fxChain;
-        }
-
-        if ( choice == 18 ) {
-            [
-                new FxDownSampler,
-                new FxDelay,
-                new FxFlanger
-            ] @=> fxChain;
-        }
-
         // Beyond here all choices are for Config.rpi == 0 only
         // because they feature Chugens
-        if ( choice == 19 ) {
+        if ( choice == 13 ) {
             [
                 new FxGate,
                 new FxReverseDelay
             ] @=> fxChain;
         }
 
-        if ( choice == 20 ) {
+        if ( choice == 14 ) {
             [
                 new FxFlanger,
                 new FxReverseDelay
             ] @=> fxChain;
         }
 
-        if ( choice == 21 ) {
+        if ( choice == 15 ) {
             [
                 new FxDelayVariable,
                 new FxReverseDelay
             ] @=> fxChain;
         }
 
-        if ( choice == 22 ) {
+        if ( choice == 16 ) {
             [
                 new FxFilter,
                 new FxDelayVariable,
@@ -201,21 +137,21 @@ public class FxChain {
             ] @=> fxChain;
         }
 
-        if ( choice == 23 ) {
+        if ( choice == 17 ) {
             [
                 new FxFilter,
                 new FxReverseDelay
             ] @=> fxChain;
         }
 
-        if ( choice == 24 ) {
+        if ( choice == 18 ) {
             [
                 new FxGate,
                 new FxReverseDelay
             ] @=> fxChain;
         }
 
-        if ( choice == 25 ) {
+        if ( choice == 19 ) {
             // FxPassthrough required for a chain
             // as ChucK doesn't allow array ref assignment
             // of single item Object array...
@@ -287,15 +223,12 @@ public class FxChain {
             }
         }
 
-        outputPan.left =< outLeft;
-        outputPan.right =< outRight;
-
-        outLeft =< Mixer.leftOut;
-        outRight =< Mixer.rightOut;
+        outputPan.left =< Mixer.leftOut;
+        outputPan.right =< Mixer.rightOut;
     }
 
     fun void fadeIn(dur fadeTime) {
-        fader.fadeIn( fadeTime, 0.8, outputPan );
+        fader.fadeIn( fadeTime, 1.0, outputPan );
     }
 
     fun void fadeOut(dur fadeTime) {
