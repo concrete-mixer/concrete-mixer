@@ -32,8 +32,6 @@ me.arg(1) => string stream;
 
 Std.atoi(me.arg(2)) => int playId;
 
-<<< "Playing stream", stream ,  "filepath" ,  filepath ,  "playId" ,  playId >>>;
-
 Mixer.bufs[playId] @=> SndBuf2 buf;
 
 // set up buf
@@ -48,6 +46,8 @@ if ( buf.chunks() == Config.sndBufChunks ) {
 0 => buf.gain;
 filepath => buf.read;
 fadeTime => now; // gives time to read in first part of file
+
+<<< "Playing stream", stream ,  "filepath" ,  filepath ,  "playId" ,  playId, "channelCount", buf.channels() >>>;
 
 // This is only relevant for Concrete Mixer Radio
 if ( Config.oscWeb ) {
@@ -65,7 +65,11 @@ if ( buf.channels() == 1 ) {
 
     // send buf to fx
     // could make this conditional
-    c.getFloat( -1.0, 1.0 ) => p.pan.pan;
+    [ -0.75, -0.5, 0.5, 0.75 ] @=> float panPositions[];
+
+    c.getInt(0, panPositions.size() - 1) => int panChoice;
+
+    panPositions[panChoice] => p.pan.pan;
 
     as.initialise( filepath, p, f, buf );
 }
@@ -115,7 +119,7 @@ fun void playbackSingleChannel() {
 }
 
 fun void playbackDoubleChannel() {
-    f.fadeIn( fadeTime, 0.5, buf );
+    f.fadeIn( fadeTime, 0.33, buf );
     buf.length() - fadeTime => now;
     f.fadeOut( fadeTime, buf );
     fadeTime => now;
@@ -146,7 +150,7 @@ fun void activity() {
 
         // still here?
         // shall we do anything to the signal?
-        if ( c.takeAction( 8 ) ) {
+        if ( c.takeAction( 16 ) ) {
             // delegate duration to AlterSignal
             if ( debug ) { <<< "ALTERING SIGNAL ON", filepath >>>; }
             as.alterSignal( duration );

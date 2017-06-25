@@ -44,6 +44,8 @@ public class AlterSignal {
         getChoice(duration) => int choice;
 
         // first choices involve manipulating SndBuf playback
+        // note there are some manipulations not used but could be reinstated:
+        // octavate() and makeslide()
         if ( choice == 1 ) {
             reverse();
         }
@@ -53,23 +55,15 @@ public class AlterSignal {
         }
 
         if ( choice == 3 ) {
-            makeSlide();
-        }
-
-        if ( choice == 4 ) {
             xeno();
         }
 
-        if ( choice == 5 ) {
+        if ( choice == 4 ) {
             panBuf();
         }
 
-        if ( choice == 6 ) {
-            octavate();
-        }
-
         // all other choices involve applying Fx modules
-        if ( choice > 6 ) {
+        if ( choice == 5 ) {
             effecto(choice);
         }
     }
@@ -78,7 +72,7 @@ public class AlterSignal {
     // Only chugen now in operation here is reverseDelay
     fun int getChoice(dur duration) {
         // size of choices limited by config rpi setting
-        15 => int endInt;
+        5 => int endInt;
         1 => int startInt;
 
         // first option is reverse playback for duration
@@ -90,7 +84,7 @@ public class AlterSignal {
         }
 
         if ( Config.rpi ) {
-            14 => endInt;
+            5 => endInt;
         }
 
         c.getInt( startInt, endInt ) => int choice;
@@ -102,41 +96,14 @@ public class AlterSignal {
         if ( debug ) { <<< effect, filepath, duration, "samples" >>>; }
     }
 
-    // apply Concrete Mixer Fx effects to signal
+    // Apply Concrete Mixer Fx effects to buf signal
+    // we used to put more things on (flange, reverse delay, etc)
+    // but for now there's just one in use
     fun void effecto( int choice ) {
         Fx effect;
 
-        if ( choice == 6 ) {
-            new FxReverb @=> effect;
-        }
-
-        if ( choice == 7 ) {
-            new FxFlanger @=> effect;
-        }
-
-        if ( choice == 8 ) {
-            new FxDelayVariable @=> effect;
-        }
-
-        if ( choice == 9 ) {
-            new FxDelay @=> effect;
-        }
-
-        if ( choice == 10 ) {
-            new FxDownSampler @=> effect;
-        }
-
-        if ( choice == 11 ) {
-            new FxRingMod @=> effect;
-        }
-
-        if ( choice == 12 ) {
+        if ( choice == 5 ) {
             new FxFeedback @=> effect;
-        }
-
-        // the following not invoked if Config.rpi
-        if ( choice == 13 ) {
-            new FxReverseDelay @=> effect;
         }
 
         if ( debug ) { <<< "EFFECTING", filepath, effect.idString() >>>; }
