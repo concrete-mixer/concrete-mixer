@@ -58,6 +58,17 @@ if ( Config.oscWeb ) {
 1 => buf.pos; // sets buf pos back to start
 
 if ( buf.channels() == 1 ) {
+    playbackSingleChannel();
+}
+else {
+    playbackDoubleChannel();
+}
+
+Mixer.oscOut.start("/playsound").add(stream).add(playId).send();
+
+// End of execution
+
+fun void playbackSingleChannel() {
     buf => p.pan;
 
     p.pan.left => Mixer.leftOut;
@@ -67,13 +78,25 @@ if ( buf.channels() == 1 ) {
     // could make this conditional
     [ -0.75, -0.5, 0.5, 0.75 ] @=> float panPositions[];
 
-    c.getInt(0, panPositions.size() - 1) => int panChoice;
+    // this does a bit of pan law compensation
+    // (see https://en.wikipedia.org/wiki/Pan_law)
+    [ 1.5, 1.0, 1.0, 1.5 ] @=> float gainValues[];
 
-    panPositions[panChoice] => p.pan.pan;
+    c.getInt(0, panPositions.size() - 1) => int choice;
+
+    panPositions[choice] => float gain;
 
     as.initialise( filepath, p, f, buf );
+    f.fadeInBlocking( fadeTime, gain, buf );
+    activity();
+    f.fadeOutBlocking( fadeTime, buf );
+
+    buf =< p.pan;
+    p.pan.left =< Mixer.leftOut;
+    p.pan.right =< Mixer.rightOut;
 }
-else {
+
+fun void playbackDoubleChannel() {
     // swap channels half the time
     if ( c.getInt( 0, 1 ) ) {
         buf.chan(0) => Mixer.leftOut;
@@ -83,46 +106,17 @@ else {
         buf.chan(1) => Mixer.leftOut;
         buf.chan(0) => Mixer.rightOut;
     }
-}
 
+    f.fadeIn( fadeTime, 1.0, buf );
+    buf.length() - fadeTime => now;
+    f.fadeOut( fadeTime, buf );
+    fadeTime => now;
 
-1 => buf.pos;
-
-if ( buf.channels() == 1 ) {
-    playbackSingleChannel();
-}
-else {
-    playbackDoubleChannel();
-}
-
-if ( buf.channels() == 1 ) {
-    buf =< p.pan;
-    p.pan.left =< Mixer.leftOut;
-    p.pan.right =< Mixer.rightOut;
-}
-else {
-    // need to cover all permutations as we mix it up a bit
+    // unplug everything. need to cover all permutations as we mix it up a bit
     buf.chan(0) =< Mixer.leftOut;
     buf.chan(0) =< Mixer.rightOut;
     buf.chan(1) =< Mixer.leftOut;
     buf.chan(1) =< Mixer.rightOut;
-}
-
-Mixer.oscOut.start("/playsound").add(stream).add(playId).send();
-
-// End of execution
-
-fun void playbackSingleChannel() {
-    f.fadeInBlocking( fadeTime, 1.0, buf );
-    activity();
-    f.fadeOutBlocking( fadeTime, buf );
-}
-
-fun void playbackDoubleChannel() {
-    f.fadeIn( fadeTime, 0.33, buf );
-    buf.length() - fadeTime => now;
-    f.fadeOut( fadeTime, buf );
-    fadeTime => now;
 }
 
 fun void activity() {
